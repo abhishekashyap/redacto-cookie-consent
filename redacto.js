@@ -1,27 +1,27 @@
 /*jslint browser: true, evil: true */
 /* min ready */
 
-var redactoScriptsDiscover = document.getElementsByTagName('script'),
+var redactoScriptsDiscover = document.getElementsByTagName("script"),
   redactoCurrentScript =
     document.currentScript instanceof HTMLScriptElement
       ? document.currentScript
       : redactoScriptsDiscover[redactoScriptsDiscover.length - 1],
-  redactoPath = redactoCurrentScript.src.split('?')[0],
-  redactoForceCDN = redactoForceCDN === undefined ? '' : redactoForceCDN,
-  redactoUseMin = redactoUseMin === undefined ? '' : redactoUseMin,
+  redactoPath = redactoCurrentScript.src.split("?")[0],
+  redactoForceCDN = redactoForceCDN === undefined ? "" : redactoForceCDN,
+  redactoUseMin = redactoUseMin === undefined ? "" : redactoUseMin,
   cdn =
-    redactoForceCDN === ''
-      ? redactoPath.split('/').slice(0, -1).join('/') + '/'
+    redactoForceCDN === ""
+      ? redactoPath.split("/").slice(0, -1).join("/") + "/"
       : redactoForceCDN,
   alreadyLaunch = alreadyLaunch === undefined ? 0 : alreadyLaunch,
   redactoForceLanguage =
-    redactoForceLanguage === undefined ? '' : redactoForceLanguage,
+    redactoForceLanguage === undefined ? "" : redactoForceLanguage,
   redactoForceExpire =
-    redactoForceExpire === undefined ? '' : redactoForceExpire,
-  redactoCustomText = redactoCustomText === undefined ? '' : redactoCustomText,
+    redactoForceExpire === undefined ? "" : redactoForceExpire,
+  redactoCustomText = redactoCustomText === undefined ? "" : redactoCustomText,
   // redactoExpireInDay: true for day(s) value - false for hour(s) value
   redactoExpireInDay =
-    redactoExpireInDay === undefined || typeof redactoExpireInDay !== 'boolean'
+    redactoExpireInDay === undefined || typeof redactoExpireInDay !== "boolean"
       ? true
       : redactoExpireInDay,
   timeExpire = 31536000000,
@@ -30,7 +30,7 @@ var redactoScriptsDiscover = document.getElementsByTagName('script'),
   redactoIsLoaded = false;
 
 var redacto = {
-  version: '1.25.0',
+  version: "1.25.0",
   cdn: cdn,
   user: {},
   lang: {},
@@ -47,18 +47,18 @@ var redacto = {
     load: function () {},
   },
   init: function (params) {
-    'use strict';
+    "use strict";
     var origOpen;
 
     redacto.parameters = params;
     if (alreadyLaunch === 0) {
       alreadyLaunch = 1;
       if (window.addEventListener) {
-        if (document.readyState === 'complete') {
+        if (document.readyState === "complete") {
           redacto.initEvents.loadEvent(false);
         } else {
           window.addEventListener(
-            'load',
+            "load",
             function () {
               redacto.initEvents.loadEvent(false);
             },
@@ -66,7 +66,7 @@ var redacto = {
           );
         }
         window.addEventListener(
-          'scroll',
+          "scroll",
           function () {
             redacto.initEvents.scrollEvent();
           },
@@ -74,69 +74,69 @@ var redacto = {
         );
 
         window.addEventListener(
-          'keydown',
+          "keydown",
           function (evt) {
             redacto.initEvents.keydownEvent(false, evt);
           },
           false
         );
         window.addEventListener(
-          'hashchange',
+          "hashchange",
           function () {
             redacto.initEvents.hashchangeEvent();
           },
           false
         );
         window.addEventListener(
-          'resize',
+          "resize",
           function () {
             redacto.initEvents.resizeEvent();
           },
           false
         );
       } else {
-        if (document.readyState === 'complete') {
+        if (document.readyState === "complete") {
           redacto.initEvents.loadEvent(true);
         } else {
-          window.attachEvent('onload', function () {
+          window.attachEvent("onload", function () {
             redacto.initEvents.loadEvent(true);
           });
         }
-        window.attachEvent('onscroll', function () {
+        window.attachEvent("onscroll", function () {
           redacto.initEvents.scrollEvent();
         });
-        window.attachEvent('onkeydown', function (evt) {
+        window.attachEvent("onkeydown", function (evt) {
           redacto.initEvents.keydownEvent(true, evt);
         });
-        window.attachEvent('onhashchange', function () {
+        window.attachEvent("onhashchange", function () {
           redacto.initEvents.hashchangeEvent();
         });
-        window.attachEvent('onresize', function () {
+        window.attachEvent("onresize", function () {
           redacto.initEvents.resizeEvent();
         });
       }
 
-      if (typeof XMLHttpRequest !== 'undefined') {
+      if (typeof XMLHttpRequest !== "undefined") {
         origOpen = XMLHttpRequest.prototype.open;
         XMLHttpRequest.prototype.open = function () {
           if (window.addEventListener) {
             this.addEventListener(
-              'load',
+              "load",
               function () {
-                if (typeof redactoProLoadServices === 'function') {
+                if (typeof redactoProLoadServices === "function") {
                   redactoProLoadServices();
                 }
               },
               false
             );
-          } else if (typeof this.attachEvent !== 'undefined') {
-            this.attachEvent('onload', function () {
-              if (typeof redactoProLoadServices === 'function') {
+          } else if (typeof this.attachEvent !== "undefined") {
+            this.attachEvent("onload", function () {
+              if (typeof redactoProLoadServices === "function") {
                 redactoProLoadServices();
               }
             });
           } else {
-            if (typeof redactoProLoadServices === 'function') {
+            if (typeof redactoProLoadServices === "function") {
               setTimeout(redactoProLoadServices, 1000);
             }
           }
@@ -156,16 +156,16 @@ var redacto = {
     loadEvent: function (isOldBrowser) {
       redacto.load();
       redacto.fallback(
-        ['redactoOpenPanel'],
+        ["redactoOpenPanel"],
         function (elem) {
           if (isOldBrowser) {
-            elem.attachEvent('onclick', function (event) {
+            elem.attachEvent("onclick", function (event) {
               redacto.userInterface.openPanel();
               event.preventDefault();
             });
           } else {
             elem.addEventListener(
-              'click',
+              "click",
               function (event) {
                 redacto.userInterface.openPanel();
                 event.preventDefault();
@@ -201,60 +201,60 @@ var redacto = {
     hashchangeEvent: function () {
       if (
         document.location.hash === redacto.hashtag &&
-        redacto.hashtag !== ''
+        redacto.hashtag !== ""
       ) {
         redacto.userInterface.openPanel();
       }
     },
     resizeEvent: function () {
-      var tacElem = document.getElementById('redacto');
+      var tacElem = document.getElementById("redacto");
       var tacCookieContainer = document.getElementById(
-        'redactoCookiesListContainer'
+        "redactoCookiesListContainer"
       );
 
-      if (tacElem && tacElem.style.display === 'block') {
-        redacto.userInterface.jsSizing('main');
+      if (tacElem && tacElem.style.display === "block") {
+        redacto.userInterface.jsSizing("main");
       }
 
-      if (tacCookieContainer && tacCookieContainer.style.display === 'block') {
-        redacto.userInterface.jsSizing('cookie');
+      if (tacCookieContainer && tacCookieContainer.style.display === "block") {
+        redacto.userInterface.jsSizing("cookie");
       }
     },
     scrollEvent: function () {
       var scrollPos = window.pageYOffset || document.documentElement.scrollTop;
       var heightPosition;
-      var tacPercentage = document.getElementById('redactoPercentage');
-      var tacAlertBig = document.getElementById('redactoAlertBig');
+      var tacPercentage = document.getElementById("redactoPercentage");
+      var tacAlertBig = document.getElementById("redactoAlertBig");
 
       if (tacAlertBig && !redacto.highPrivacy) {
-        if (tacAlertBig.style.display === 'block') {
-          heightPosition = tacAlertBig.offsetHeight + 'px';
+        if (tacAlertBig.style.display === "block") {
+          heightPosition = tacAlertBig.offsetHeight + "px";
 
           if (scrollPos > screen.height * 2) {
             redacto.userInterface.respondAll(true);
           } else if (scrollPos > screen.height / 2) {
-            document.getElementById('redactoDisclaimerAlert').innerHTML =
-              '<strong>' +
+            document.getElementById("redactoDisclaimerAlert").innerHTML =
+              "<strong>" +
               redacto.lang.alertBigScroll +
-              '</strong> ' +
+              "</strong> " +
               redacto.lang.alertBig;
           }
 
           if (tacPercentage) {
-            if (redacto.orientation === 'top') {
+            if (redacto.orientation === "top") {
               tacPercentage.style.top = heightPosition;
             } else {
               tacPercentage.style.bottom = heightPosition;
             }
             tacPercentage.style.width =
-              (100 / (screen.height * 2)) * scrollPos + '%';
+              (100 / (screen.height * 2)) * scrollPos + "%";
           }
         }
       }
     },
   },
   load: function () {
-    'use strict';
+    "use strict";
 
     if (redactoIsLoaded === true) {
       return;
@@ -263,49 +263,49 @@ var redacto = {
     var cdn = redacto.cdn,
       language = redacto.getLanguage(),
       useMinifiedJS =
-        new URL(cdn, redactoPath).host == 'cdn.jsdelivr.net' ||
-        redactoPath.indexOf('.min.') >= 0 ||
-        redactoUseMin !== '',
+        new URL(cdn, redactoPath).host == "cdn.jsdelivr.net" ||
+        redactoPath.indexOf(".min.") >= 0 ||
+        redactoUseMin !== "",
       pathToLang =
         cdn +
-        'lang/redacto.' +
+        "lang/redacto." +
         language +
-        (useMinifiedJS ? '.min' : '') +
-        '.js?v=' +
+        (useMinifiedJS ? ".min" : "") +
+        ".js?v=" +
         redacto.version,
       pathToServices =
         cdn +
-        'redacto.services' +
-        (useMinifiedJS ? '.min' : '') +
-        '.js?v=' +
+        "redacto.services" +
+        (useMinifiedJS ? ".min" : "") +
+        ".js?v=" +
         redacto.version,
-      linkElement = document.createElement('link'),
+      linkElement = document.createElement("link"),
       defaults = {
         adblocker: false,
-        hashtag: '#redacto',
-        cookieName: 'redacto',
+        hashtag: "#redacto",
+        cookieName: "redacto",
         highPrivacy: true,
-        orientation: 'middle',
-        bodyPosition: 'bottom',
+        orientation: "middle",
+        bodyPosition: "bottom",
         removeCredit: false,
         showAlertSmall: false,
         showDetailsOnClick: true,
         showIcon: true,
-        iconPosition: 'BottomRight',
+        iconPosition: "BottomRight",
         cookieslist: false,
         cookieslistEmbed: false,
         handleBrowserDNTRequest: false,
         DenyAllCta: true,
         AcceptAllCta: true,
         moreInfoLink: true,
-        privacyUrl: '',
+        privacyUrl: "",
         useExternalCss: false,
         useExternalJs: false,
         mandatory: true,
         mandatoryCta: true,
         closePopup: false,
         groupServices: false,
-        serviceDefaultState: 'wait',
+        serviceDefaultState: "wait",
         googleConsentMode: true,
         bingConsentMode: true,
         softConsentMode: false,
@@ -324,13 +324,13 @@ var redacto = {
       ((redacto.parameters.readmoreLink !== undefined &&
         window.location.href == redacto.parameters.readmoreLink) ||
         window.location.href == redacto.parameters.privacyUrl) &&
-      redacto.parameters.orientation == 'middle'
+      redacto.parameters.orientation == "middle"
     ) {
-      redacto.parameters.orientation = 'bottom';
+      redacto.parameters.orientation = "bottom";
     }
 
     // Step -1
-    if (typeof redactoCustomPremium !== 'undefined') {
+    if (typeof redactoCustomPremium !== "undefined") {
       redactoCustomPremium();
     }
 
@@ -353,23 +353,23 @@ var redacto = {
 
     // update dataLayer when consent is updated
     if (redacto.parameters.dataLayer === true) {
-      window.addEventListener('tac.root_available', function () {
+      window.addEventListener("tac.root_available", function () {
         setTimeout(function () {
           window.dataLayer = window.dataLayer || [];
           redacto.job.filter((job) => redacto.state[job] === true).length > 0 &&
             window.dataLayer.push({
-              event: 'tac_consent_update',
+              event: "tac_consent_update",
               tacAuthorizedVendors: redacto.job.filter(
                 (job) => redacto.state[job] === true
               ),
             });
         }, 200);
       });
-      document.addEventListener('tac.consent_updated', function () {
+      document.addEventListener("tac.consent_updated", function () {
         window.dataLayer = window.dataLayer || [];
         redacto.job.filter((job) => redacto.state[job] === true).length > 0 &&
           window.dataLayer.push({
-            event: 'tac_consent_update',
+            event: "tac_consent_update",
             tacAuthorizedVendors: redacto.job.filter(
               (job) => redacto.state[job] === true
             ),
@@ -380,40 +380,40 @@ var redacto = {
     // bing consent mode
     if (redacto.parameters.bingConsentMode === true) {
       window.uetq = window.uetq || [];
-      window.uetq.push('consent', 'default', { ad_storage: 'denied' });
+      window.uetq.push("consent", "default", { ad_storage: "denied" });
 
       document.addEventListener(
-        'clarity_consentModeOk',
+        "clarity_consentModeOk",
         function () {
-          window.uetq.push('consent', 'update', { ad_storage: 'granted' });
+          window.uetq.push("consent", "update", { ad_storage: "granted" });
         },
         { once: true }
       );
       document.addEventListener(
-        'clarity_consentModeKo',
+        "clarity_consentModeKo",
         function () {
-          window.uetq.push('consent', 'update', { ad_storage: 'denied' });
+          window.uetq.push("consent", "update", { ad_storage: "denied" });
         },
         { once: true }
       );
       document.addEventListener(
-        'bingads_consentModeOk',
+        "bingads_consentModeOk",
         function () {
-          window.uetq.push('consent', 'update', { ad_storage: 'granted' });
+          window.uetq.push("consent", "update", { ad_storage: "granted" });
         },
         { once: true }
       );
       document.addEventListener(
-        'bingads_consentModeKo',
+        "bingads_consentModeKo",
         function () {
-          window.uetq.push('consent', 'update', { ad_storage: 'denied' });
+          window.uetq.push("consent", "update", { ad_storage: "denied" });
         },
         { once: true }
       );
 
       if (redacto.parameters.softConsentMode === false) {
-        window.addEventListener('tac.root_available', function () {
-          if (typeof redacto_block !== 'undefined') {
+        window.addEventListener("tac.root_available", function () {
+          if (typeof redacto_block !== "undefined") {
             redacto_block.unblock(/clarity\.ms/);
             redacto_block.unblock(/bat\.bing\.com/);
           }
@@ -430,38 +430,38 @@ var redacto = {
       };
 
       // default consent to denied
-      window.tac_gtag('consent', 'default', {
-        ad_storage: 'denied',
-        analytics_storage: 'denied',
-        ad_user_data: 'denied',
-        ad_personalization: 'denied',
+      window.tac_gtag("consent", "default", {
+        ad_storage: "denied",
+        analytics_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
         wait_for_update: 800,
       });
 
       // if google ads, add a service for personalized ads
-      document.addEventListener('googleads_added', function () {
+      document.addEventListener("googleads_added", function () {
         // skip if already added
-        if (redacto.added['gcmads'] === true) {
+        if (redacto.added["gcmads"] === true) {
           return;
         }
 
         // simple service to control gcm with event
         redacto.services.gcmads = {
-          key: 'gcmads',
-          type: 'ads',
-          name: 'Google Ads (personalized ads)',
-          uri: 'https://support.google.com/analytics/answer/9976101',
+          key: "gcmads",
+          type: "ads",
+          name: "Google Ads (personalized ads)",
+          uri: "https://support.google.com/analytics/answer/9976101",
           needConsent: true,
           cookies: [],
           js: function () {},
           fallback: function () {},
         };
-        redacto.job.push('gcmads');
+        redacto.job.push("gcmads");
 
         // fix the event handler on the buttons
         var i,
-          allowBtns = document.getElementsByClassName('redactoAllow'),
-          denyBtns = document.getElementsByClassName('redactoDeny');
+          allowBtns = document.getElementsByClassName("redactoAllow"),
+          denyBtns = document.getElementsByClassName("redactoDeny");
         for (i = 0; i < allowBtns.length; i++) {
           redacto.addClickEventToElement(allowBtns[i], function () {
             redacto.userInterface.respond(this, true);
@@ -475,17 +475,17 @@ var redacto = {
       });
 
       // when personalized ads are accepted, accept googleads
-      document.addEventListener('gcmads_allowed', function () {
-        redacto.setConsent('googleads', true);
+      document.addEventListener("gcmads_allowed", function () {
+        redacto.setConsent("googleads", true);
       });
 
       // personalized ads loaded/allowed, set gcm to granted
       document.addEventListener(
-        'gcmads_consentModeOk',
+        "gcmads_consentModeOk",
         function () {
-          window.tac_gtag('consent', 'update', {
-            ad_user_data: 'granted',
-            ad_personalization: 'granted',
+          window.tac_gtag("consent", "update", {
+            ad_user_data: "granted",
+            ad_personalization: "granted",
           });
         },
         { once: true }
@@ -493,11 +493,11 @@ var redacto = {
 
       // personalized ads disallowed, set gcm to denied
       document.addEventListener(
-        'gcmads_consentModeKo',
+        "gcmads_consentModeKo",
         function () {
-          window.tac_gtag('consent', 'update', {
-            ad_user_data: 'denied',
-            ad_personalization: 'denied',
+          window.tac_gtag("consent", "update", {
+            ad_user_data: "denied",
+            ad_personalization: "denied",
           });
         },
         { once: true }
@@ -505,10 +505,10 @@ var redacto = {
 
       // google ads loaded/allowed, set gcm to granted
       document.addEventListener(
-        'googleads_consentModeOk',
+        "googleads_consentModeOk",
         function () {
-          window.tac_gtag('consent', 'update', {
-            ad_storage: 'granted',
+          window.tac_gtag("consent", "update", {
+            ad_storage: "granted",
           });
         },
         { once: true }
@@ -516,11 +516,11 @@ var redacto = {
 
       // google ads disallowed, disable personalized ads and update gcm
       document.addEventListener(
-        'googleads_consentModeKo',
+        "googleads_consentModeKo",
         function () {
-          redacto.setConsent('gcmads', false);
-          window.tac_gtag('consent', 'update', {
-            ad_storage: 'denied',
+          redacto.setConsent("gcmads", false);
+          window.tac_gtag("consent", "update", {
+            ad_storage: "denied",
           });
         },
         { once: true }
@@ -528,10 +528,10 @@ var redacto = {
 
       // ga4 loaded/allowed, set gcm to granted
       document.addEventListener(
-        'gtag_consentModeOk',
+        "gtag_consentModeOk",
         function () {
-          window.tac_gtag('consent', 'update', {
-            analytics_storage: 'granted',
+          window.tac_gtag("consent", "update", {
+            analytics_storage: "granted",
           });
         },
         { once: true }
@@ -539,10 +539,10 @@ var redacto = {
 
       // ga4 disallowed, update gcm
       document.addEventListener(
-        'gtag_consentModeKo',
+        "gtag_consentModeKo",
         function () {
-          window.tac_gtag('consent', 'update', {
-            analytics_storage: 'denied',
+          window.tac_gtag("consent", "update", {
+            analytics_storage: "denied",
           });
         },
         { once: true }
@@ -550,10 +550,10 @@ var redacto = {
 
       // multiple ga4 loaded/allowed, set gcm to granted
       document.addEventListener(
-        'multiplegtag_consentModeOk',
+        "multiplegtag_consentModeOk",
         function () {
-          window.tac_gtag('consent', 'update', {
-            analytics_storage: 'granted',
+          window.tac_gtag("consent", "update", {
+            analytics_storage: "granted",
           });
         },
         { once: true }
@@ -561,10 +561,10 @@ var redacto = {
 
       // multiple ga4 disallowed, update gcm
       document.addEventListener(
-        'multiplegtag_consentModeKo',
+        "multiplegtag_consentModeKo",
         function () {
-          window.tac_gtag('consent', 'update', {
-            analytics_storage: 'denied',
+          window.tac_gtag("consent", "update", {
+            analytics_storage: "denied",
           });
         },
         { once: true }
@@ -572,8 +572,8 @@ var redacto = {
 
       // allow gtag/googleads by default if consent mode is on
       if (redacto.parameters.softConsentMode === false) {
-        window.addEventListener('tac.root_available', function () {
-          if (typeof redacto_block !== 'undefined') {
+        window.addEventListener("tac.root_available", function () {
+          if (typeof redacto_block !== "undefined") {
             redacto_block.unblock(/www\.googletagmanager\.com\/gtag\/js/);
             redacto_block.unblock(
               /www\.googleadservices\.com\/pagead\/conversion/
@@ -588,49 +588,49 @@ var redacto = {
 
     // Step 1: load css
     if (!redacto.parameters.useExternalCss) {
-      linkElement.rel = 'stylesheet';
-      linkElement.type = 'text/css';
+      linkElement.rel = "stylesheet";
+      linkElement.type = "text/css";
       linkElement.href =
         cdn +
-        'css/redacto' +
-        (useMinifiedJS ? '.min' : '') +
-        '.css?v=' +
+        "css/redacto" +
+        (useMinifiedJS ? ".min" : "") +
+        ".css?v=" +
         redacto.version;
-      document.getElementsByTagName('head')[0].appendChild(linkElement);
+      document.getElementsByTagName("head")[0].appendChild(linkElement);
     }
     // Step 2: load language and services
-    redacto.addInternalScript(pathToLang, '', function () {
-      if (redactoCustomText !== '') {
+    redacto.addInternalScript(pathToLang, "", function () {
+      if (redactoCustomText !== "") {
         redacto.lang = redacto.AddOrUpdate(redacto.lang, redactoCustomText);
       }
 
       document.documentElement.style.setProperty(
-        '--tacTitleBanner',
+        "--tacTitleBanner",
         JSON.stringify(redacto.lang.middleBarHead)
       );
 
-      redacto.addInternalScript(pathToServices, '', function () {
+      redacto.addInternalScript(pathToServices, "", function () {
         // disable the expand option if services grouped by category
         if (redacto.parameters.groupServices == true) {
           redacto.parameters.showDetailsOnClick = true;
         }
 
         var body = document.body,
-          div = document.createElement('div'),
-          html = '',
+          div = document.createElement("div"),
+          html = "",
           index,
-          orientation = 'Top',
-          modalAttrs = '',
+          orientation = "Top",
+          modalAttrs = "",
           cat = [
-            'ads',
-            'analytic',
-            'api',
-            'comment',
-            'social',
-            'support',
-            'video',
-            'other',
-            'google',
+            "ads",
+            "analytic",
+            "api",
+            "comment",
+            "social",
+            "support",
+            "video",
+            "other",
+            "google",
           ],
           i;
 
@@ -645,24 +645,24 @@ var redacto = {
         });
 
         if (!/^<\s*(p|ul)(\s|>)/i.test(redacto.lang.disclaimer)) {
-          redacto.lang.disclaimer = '<p>' + redacto.lang.disclaimer + '</p>';
+          redacto.lang.disclaimer = "<p>" + redacto.lang.disclaimer + "</p>";
         }
 
         // Step 3: prepare the html
         html +=
           '<div role="heading" aria-level="2" id="tac_title" class="tac_visually-hidden">' +
           redacto.lang.title +
-          '</div>';
+          "</div>";
         html += '<div id="redactoPremium"></div>';
         if (redacto.reloadThePage) {
           html +=
             '<button type="button" id="redactoBack" aria-label="' +
             redacto.lang.close +
-            ' (' +
+            " (" +
             redacto.lang.reload +
             ')" title="' +
             redacto.lang.close +
-            ' (' +
+            " (" +
             redacto.lang.reload +
             ')"></button>';
         } else {
@@ -679,65 +679,65 @@ var redacto = {
           html +=
             '   <button type="button" id="redactoClosePanel" aria-describedby="dialogTitle" aria-label="' +
             redacto.lang.close +
-            ' (' +
+            " (" +
             redacto.lang.reload +
             ')" title="' +
             redacto.lang.close +
-            ' (' +
+            " (" +
             redacto.lang.reload +
             ')">';
         } else {
           html +=
             '   <button type="button" id="redactoClosePanel" aria-describedby="dialogTitle" >';
         }
-        html += '       ' + redacto.lang.close;
-        html += '   </button>';
+        html += "       " + redacto.lang.close;
+        html += "   </button>";
         html += '   <div id="redactoServices">';
         html +=
           '      <div class="redactoLine redactoMainLine" id="redactoMainLineOffset">';
         html +=
           '         <span class="redactoH1" role="heading" aria-level="2" id="dialogTitle">' +
           redacto.lang.title +
-          '</span>';
+          "</span>";
         html += '         <div id="redactoInfo">';
-        html += '         ' + redacto.lang.disclaimer;
-        if (redacto.parameters.privacyUrl !== '') {
-          html += '   <br/><br/>';
+        html += "         " + redacto.lang.disclaimer;
+        if (redacto.parameters.privacyUrl !== "") {
+          html += "   <br/><br/>";
           html +=
             '   <button type="button" id="redactoPrivacyUrlDialog" role="link">';
-          html += '       ' + redacto.lang.privacyUrl;
-          html += '   </button>';
+          html += "       " + redacto.lang.privacyUrl;
+          html += "   </button>";
         }
-        html += '         </div>';
+        html += "         </div>";
         html += '         <div class="redactoName">';
         html +=
           '            <span class="redactoH2" role="heading" aria-level="3">' +
           redacto.lang.all +
-          '</span>';
-        html += '         </div>';
+          "</span>";
+        html += "         </div>";
         html += '         <div class="redactoAsk" id="redactoScrollbarAdjust">';
         html +=
           '            <button aria-label="' +
           redacto.lang.icon +
-          ' : ' +
+          " : " +
           redacto.lang.allowAll +
           '" type="button" id="redactoAllAllowed" class="redactoAllow">';
         html +=
           '               <span class="redactoCheck" aria-hidden="true"></span> ' +
           redacto.lang.allowAll;
-        html += '            </button> ';
+        html += "            </button> ";
         html +=
           '            <button aria-label="' +
           redacto.lang.icon +
-          ' : ' +
+          " : " +
           redacto.lang.denyAll +
           '" type="button" id="redactoAllDenied" class="redactoDeny">';
         html +=
           '               <span class="redactoCross" aria-hidden="true"></span> ' +
           redacto.lang.denyAll;
-        html += '            </button>';
-        html += '         </div>';
-        html += '      </div>';
+        html += "            </button>";
+        html += "         </div>";
+        html += "      </div>";
         html += '      <div class="redactoBorder">';
         html += '         <div class="clear"></div><ul>';
 
@@ -748,24 +748,24 @@ var redacto = {
             html +=
               '   <button type="button" tabindex="-1"><span class="redactoPlus" aria-hidden="true"></span> ' +
               redacto.lang.mandatoryTitle +
-              '</button>';
+              "</button>";
           } else {
             html +=
               '   <span class="asCatToggleBtn">' +
               redacto.lang.mandatoryTitle +
-              '</span>';
+              "</span>";
           }
-          html += '</div>';
+          html += "</div>";
           html += '<ul id="redactoServices_mandatory">';
           html += '<li class="redactoLine">';
           html += '   <div class="redactoName">';
           html +=
             '       <span class="redactoH3" role="heading" aria-level="4">' +
             redacto.lang.mandatoryText +
-            '</span>';
+            "</span>";
           html +=
             '       <span class="redactoListCookies" aria-hidden="true"></span><br/>';
-          html += '   </div>';
+          html += "   </div>";
           if (redacto.parameters.mandatoryCta == true) {
             html += '   <div class="redactoAsk">';
             html +=
@@ -773,17 +773,17 @@ var redacto = {
             html +=
               '           <span class="redactoCheck" aria-hidden="true"></span> ' +
               redacto.lang.allow;
-            html += '       </button> ';
+            html += "       </button> ";
             html +=
               '       <button type="button" class="redactoDeny" tabindex="-1">';
             html +=
               '           <span class="redactoCross" aria-hidden="true"></span> ' +
               redacto.lang.deny;
-            html += '       </button> ';
-            html += '   </div>';
+            html += "       </button> ";
+            html += "   </div>";
           }
-          html += '</li>';
-          html += '</ul></li>';
+          html += "</li>";
+          html += "</ul></li>";
         }
 
         if (
@@ -792,28 +792,28 @@ var redacto = {
         ) {
           setTimeout(function () {
             redacto.addClickEventToId(
-              'redacto-toggle-group-cookies',
+              "redacto-toggle-group-cookies",
               function () {
-                redacto.userInterface.toggle('redactoServices_cookies');
+                redacto.userInterface.toggle("redactoServices_cookies");
                 if (
-                  document.getElementById('redactoServices_cookies').style
-                    .display == 'block'
+                  document.getElementById("redactoServices_cookies").style
+                    .display == "block"
                 ) {
                   redacto.userInterface.addClass(
-                    'redactoServicesTitle_cookies',
-                    'redactoIsExpanded'
+                    "redactoServicesTitle_cookies",
+                    "redactoIsExpanded"
                   );
                   document
-                    .getElementById('redacto-toggle-group-cookies')
-                    .setAttribute('aria-expanded', 'true');
+                    .getElementById("redacto-toggle-group-cookies")
+                    .setAttribute("aria-expanded", "true");
                 } else {
                   redacto.userInterface.removeClass(
-                    'redactoServicesTitle_cookies',
-                    'redactoIsExpanded'
+                    "redactoServicesTitle_cookies",
+                    "redactoIsExpanded"
                   );
                   document
-                    .getElementById('redacto-toggle-group-cookies')
-                    .setAttribute('aria-expanded', 'false');
+                    .getElementById("redacto-toggle-group-cookies")
+                    .setAttribute("aria-expanded", "false");
                 }
               }
             );
@@ -822,16 +822,16 @@ var redacto = {
           html +=
             '         <li id="redactoServicesnoTitle_cookies" class="redactoHidden" style="display:block">';
           html +=
-            '            <ul>' +
+            "            <ul>" +
             '<li class="redactoLine" style="background:transparent">' +
             '   <div class="redactoName">' +
             '       <span class="redactoH3" role="heading" aria-level="3" id="redactoCookiesNumberBis">0 cookie</span>' +
             '      <button type="button" aria-expanded="false" class="redacto-toggle-group" id="redacto-toggle-group-cookies">' +
             redacto.lang.cookieDetail +
-            '</button>' +
-            '    </div>' +
-            '</li>' +
-            '</ul>';
+            "</button>" +
+            "    </div>" +
+            "</li>" +
+            "</ul>";
           html +=
             '         <ul id="redactoServices_cookies" style="display:none"><div id="redactoCookiesList"></div></ul></li>';
         }
@@ -849,33 +849,33 @@ var redacto = {
               cat[i] +
               '"><span class="redactoPlus" aria-hidden="true"></span> ' +
               redacto.lang[cat[i]].title +
-              '</button>';
+              "</button>";
           } else {
             html +=
               '               <span class="asCatToggleBtn" data-cat="redactoInlineDetails' +
               cat[i] +
               '">' +
               redacto.lang[cat[i]].title +
-              '</span>';
+              "</span>";
           }
-          html += '            </div>';
+          html += "            </div>";
           html +=
             '            <div id="redactoDetails' +
             cat[i] +
             '" class="redactoDetails ' +
             (redacto.parameters.showDetailsOnClick
-              ? 'redactoInfoBox'
-              : 'redactoDetailsInline') +
+              ? "redactoInfoBox"
+              : "redactoDetailsInline") +
             '" role="paragraph">';
-          html += '               ' + redacto.lang[cat[i]].details;
-          html += '            </div>';
+          html += "               " + redacto.lang[cat[i]].details;
+          html += "            </div>";
           html += '         <ul id="redactoServices_' + cat[i] + '"></ul></li>';
         }
         html +=
           '             <li id="redactoNoServicesTitle" class="redactoLine">' +
           redacto.lang.noServices +
-          '</li>';
-        html += '         </ul>';
+          "</li>";
+        html += "         </ul>";
         html +=
           '         <div class="redactoHidden redacto-spacer-20" id="redactoScrollbarChild"></div>';
         if (redacto.parameters.removeCredit === false) {
@@ -884,17 +884,17 @@ var redacto = {
             redacto.lang.newWindow +
             '"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAAAeCAYAAAAWwoEYAAADl0lEQVRoge1Y0W3bQAx9CjKARlC+9GVUmqDJBHEmiDyB6wkcTxBngtgTxJ0gzgQW4C/9aYOmE6g4lTQo+k6y3Rb94QOERNQd+cjj8XiGwWAwGAwGg8FgMBgMBoPB8F8RNRXe+whEKe7c36ZCAeCRxC9Rig2PUd8kPgAsoxSfQ3YAzAA8D/HwYYCb05kBKKO0teFkmbC1jlKsAnq/Abjn+QBqAIsoRS30ttwG/HNz1wH/XIxWTicLdvtW7xTAGEAMtP685CNsBTe2d/BLydfXAG57SEnMAST0zgYZSUCPk02bCvkJduIzuJzDLfPolbY+tLKmar+/8+IRePy4qdpE03qHuH8fipFb4N2+XdA3AJ/0vaQxt7s9FvkIS2XvtqnwM0rxpOQfbnE5G2LhTCmUO2fHIngOmcv+KG3HafDchB6ntwjYqenR2PqC7sOZ3E7FXHB0vqxoFyUyLh7OEH7LOGouvhhN3eIBeKXv0n5MsufdHqXcwYR5U2EbpV35lSspVPJmQj4TcgRK7jTg5IzmPUhhwM5a2WHUFCx+NgiDucmgh7idikLovHFlL0pxQ9xzX+IIP9Y6FrJsqhjlQpZRAkFVDCjZfcCHt6bqJDmuh5ylCWx0RVnk3oumaknqTH5sqrY0fBWyULaHUIgAgxb46MxV3DbieAhxOxUxjSuljig9lMQ/Bcfoi9BTEv9aLORSndVxYOH525sUDC6u2gWxcNzBNRxPanyh3ktKinOgy3WoxPbtUM0t6RkbQnzBnFPgi9GCOEubY9UffIryz9iKRe8s/FUfEWosJJGxagp85bpUO3VywQ46lOtAWfNxKwa4JXQ+628+bpxYGXXMzp5rXH401VEyXwIdowXFaKWSMFHvMTVmGnc+P3oXV2QOiBCfgex8QtcQCbcQE/H+eoHzrkFo1KM7zVO4jVVj5s6lRiWF7zyXyfRMc97J3tzj87mYqZ7E2YjzUct9GUi4tjHLR8dVkBLjQcuHFleWvQfRNEhFR7uX7pkctOwvZXsft7sAtyldEUIN2UTeLxnEfxKYswzdi88BdbZ8hifUoSMftQvP+muRwN6+Q3DeqqRExP9QmTtcheiHh0Ot1x2i2km1bP9pbufw5zZdyWsOrh7vQae5OZWbsMv30pi7cd/CKj3coPEVaCP4Zhx4eQWhOZ1Y9MTXGyP8/iGjEyfa1T4fO/4Lea9vBoPBYDAYDAaDwWAwGAwGwz8GgF8siXCCbrSRhgAAAABJRU5ErkJggg==" alt="redacto.io" /></a>';
         }
-        html += '       </div>';
-        html += '   </div>';
-        html += '</div>';
+        html += "       </div>";
+        html += "   </div>";
+        html += "</div>";
 
-        if (redacto.parameters.orientation === 'bottom') {
-          orientation = 'Bottom';
+        if (redacto.parameters.orientation === "bottom") {
+          orientation = "Bottom";
         }
 
         if (
-          redacto.parameters.orientation === 'middle' ||
-          redacto.parameters.orientation === 'popup'
+          redacto.parameters.orientation === "middle" ||
+          redacto.parameters.orientation === "popup"
         ) {
           modalAttrs =
             ' role="dialog" aria-modal="true" aria-labelledby="tac_title"';
@@ -909,120 +909,120 @@ var redacto = {
             orientation +
             '"' +
             modalAttrs +
-            '>';
+            ">";
           //html += '<div class="redactoAlertBigWrapper">';
           html += '   <span id="redactoDisclaimerAlert" role="paragraph">';
-          html += '       ' + redacto.lang.alertBigPrivacy;
-          html += '   </span>';
+          html += "       " + redacto.lang.alertBigPrivacy;
+          html += "   </span>";
           //html += '   <span class="redactoAlertBigBtnWrapper">';
           html +=
             '   <button type="button" id="redactoPersonalize" aria-label="' +
             redacto.lang.personalize +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '" title="' +
             redacto.lang.personalize +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '">';
-          html += '       ' + redacto.lang.personalize;
-          html += '   </button>';
+          html += "       " + redacto.lang.personalize;
+          html += "   </button>";
 
-          if (redacto.parameters.privacyUrl !== '') {
+          if (redacto.parameters.privacyUrl !== "") {
             html +=
               '   <button role="link" type="button" id="redactoPrivacyUrl">';
-            html += '       ' + redacto.lang.privacyUrl;
-            html += '   </button>';
+            html += "       " + redacto.lang.privacyUrl;
+            html += "   </button>";
           }
 
           //html += '   </span>';
           //html += '</div>';
-          html += '</div>';
+          html += "</div>";
         } else {
           html +=
             '<div tabindex="-1" id="redactoAlertBig" class="redactoAlertBig' +
             orientation +
             '"' +
             modalAttrs +
-            '>';
+            ">";
           //html += '<div class="redactoAlertBigWrapper">';
           html += '   <span id="redactoDisclaimerAlert" role="paragraph">';
 
           if (redacto.parameters.highPrivacy) {
-            html += '       ' + redacto.lang.alertBigPrivacy;
+            html += "       " + redacto.lang.alertBigPrivacy;
           } else {
             html +=
-              '       ' +
+              "       " +
               redacto.lang.alertBigClick +
-              ' ' +
+              " " +
               redacto.lang.alertBig;
           }
 
-          html += '   </span>';
+          html += "   </span>";
           //html += '   <span class="redactoAlertBigBtnWrapper">';
           html +=
             '   <button aria-label="' +
             redacto.lang.icon +
-            ' : ' +
+            " : " +
             redacto.lang.acceptAll +
             '" type="button" class="redactoCTAButton redactoAllow" id="redactoPersonalize2" aria-describedby="redactoDisclaimerAlert" >';
           html +=
             '       <span class="redactoCheck" aria-hidden="true"></span> ' +
             redacto.lang.acceptAll;
-          html += '   </button>';
+          html += "   </button>";
 
           if (redacto.parameters.DenyAllCta) {
             if (redacto.reloadThePage) {
               html +=
                 '   <button type="button" class="redactoCTAButton redactoDeny" id="redactoAllDenied2" aria-describedby="redactoDisclaimerAlert" aria-label="' +
                 redacto.lang.icon +
-                ' : ' +
+                " : " +
                 redacto.lang.denyAll +
-                ' (' +
+                " (" +
                 redacto.lang.reload +
                 ')" title="' +
                 redacto.lang.denyAll +
-                ' (' +
+                " (" +
                 redacto.lang.reload +
                 ')">';
             } else {
               html +=
                 '   <button type="button" class="redactoCTAButton redactoDeny" id="redactoAllDenied2" aria-describedby="redactoDisclaimerAlert" aria-label="' +
                 redacto.lang.icon +
-                ' : ' +
+                " : " +
                 redacto.lang.denyAll +
                 '">';
             }
             html +=
               '       <span class="redactoCross" aria-hidden="true"></span> ' +
               redacto.lang.denyAll;
-            html += '   </button>';
+            html += "   </button>";
             //html += '   <br/><br/>';
           }
 
           html +=
             '   <button type="button" id="redactoCloseAlert"  aria-describedby="redactoDisclaimerAlert" aria-label="' +
             redacto.lang.personalize +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '" title="' +
             redacto.lang.personalize +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '">';
-          html += '       ' + redacto.lang.personalize;
-          html += '   </button>';
+          html += "       " + redacto.lang.personalize;
+          html += "   </button>";
 
-          if (redacto.parameters.privacyUrl !== '') {
+          if (redacto.parameters.privacyUrl !== "") {
             html +=
               '   <button type="button" id="redactoPrivacyUrl" role="link">';
-            html += '       ' + redacto.lang.privacyUrl;
-            html += '   </button>';
+            html += "       " + redacto.lang.privacyUrl;
+            html += "   </button>";
           }
 
           //html += '   </span>';
           //html += '</div>';
-          html += '</div>';
+          html += "</div>";
           html += '<div id="redactoPercentage"></div>';
         }
 
@@ -1034,29 +1034,29 @@ var redacto = {
           html +=
             '   <button type="button" id="redactoManager" aria-label="' +
             redacto.lang.icon +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '" title="' +
             redacto.lang.icon +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '">';
           html +=
             '       <img src="' +
             (redacto.parameters.iconSrc
               ? redacto.parameters.iconSrc
-              : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAGA0lEQVRoge1a207bWBRdBtJwLYZhKDMVmlSK1LxNkPo+ZH6g8B6p5AuALwC+APoFoVLeoT8whPeRSt+CZKmZVu3AiIsRlEtCktGyjy8xzuXYhvahS0JJHJ/4rLP3XnuffcAPfGdQ7mM6jRLSAF4BxqsbewB2lRS2o35mpEQaJcwCyANIdLi1DGBNSWEzqmdHRqRRwjqAJclhtExOSUEP+/xIiDRKhhUWfL7ShTtBuJnqcw+/z4Ql0xNmMEwSSz4kuNIzSgpjSsqYJP/GeE185wYJroedRyiLNEpGLLzzrHSuk+83SgbxvOcyyRaDziWsRVZkSRDinpzPbwVGWIucuohsKynMS47fAQyls/BMSRmKJo3AFhG5wm2N1wF+Zs3zebbFfR0RxrXcJHQlgH+LMW616pR/WiIMEXfW3mtzXyeEGWsjKot8c4TOI98L+iKaR5PS6IUk88RLAO9F8UjrbYoYMOosNavpfmODIiwRXRR/G3ohaWVo1RU/c30jV8ab2mV8qVGzHWBOLyTLZiWs5Rolg/C3ySOi0tXP/k4aEwOwSBKPJs7Rp16ABJTe+p1xVX0It/owqqdDEMRoqd3RFxqDPh20Ig6VEPVC0i5RSCD+6wl6HlW7GksSlUMV11/GrUs5NasFLusDE9ELSVphXemtJwaT/8JyIRvxNNCfBmIiNdR04LII3DSrbe0yjqvyJF/ppptqVlt+MCLCEh/oOkPPP6N38Mb5cnQBGFsEqmXg5j3QMwoMzwGnr4HYbybBq13gZAOom/FO63zdf2qQArCsZrUN2TlJy69eSDKYV+6Q4MpP75ivHzPA53ngaBW4eGuSOt0A/lsGPmXMz0+3TFJcTfFbPfFbfnwlhON+iQhlWmA82CQ4ocQ7c6KcfL3DHuls0yT6Sx4YnLXJDCQOIRRv5yGIJBgP8Sdisj2qubpc5UGJmo+W49ifVmzL8HcpGhQPvZCUKiCliIhEN0tr2OCqHuSA8gwQ/92MkU7gxEmeVqGrTTgpxPXbUrtGWYus0I9thRIraagRQUIDf7Qn4yZhKRiFQIyhfMfUr3yblokVWSJ6k8xSnc7eNN/RjowfCYiFoDUFer1S3gW6JiJ8Nt30EMbEhU+vzSIztuRYjRLsR8IHLjlf7HZ+MrWWEXxNmbvapt4jGSqZRYSkGUetSNTPzHsui5YMQ2ajJUNks6mw4wT54Ok2ShnzzIPCUGshzawCRKy5FqvrTZe0RWzQGvw79m67XZjKmxJrLsICjtZa55gxXy+6F4sYsEtxTqhXdRTLC8ulSDaWoCLsolfN+8YUhOsJV709H7Cudr0LlVEtzqBcN+shEyThdR941OnAbF8pirKJqXyupTRTtQSReiVmXW1j7oBErB0d9xM2WEd5J9ZKYtuR4WKwwBSoORbpGrJ5ZI9lt71irJmGX1px0JYE26uNErawr2zfIcP4OHEKXm66PA3wjpCNEfpJunI4muifPjKvsFCkGjExTq63yxMJsZNMYF/J4HmDC5A3Yq36jy0ClePHVhwuu/b1HSFlEfHD5ZtD1bEK44Qu1mWys6tbWmZyPWckzlPTGiRw/XHCuk+q4Rek+mVrVL/UppwrdDEGNV2kpyuhccgc5Oxm9vWnn+19vJrVpLor0kTUrGacMplb1CfOFyTD4o9uNrHqr2Z+ZMSp1c2XcVSORnh9Q81q3k599ETgkNnjg0nGzi10K7rX+bZpHbrblPcY5A4Zxk2xcjzCvTpd9027Aa0QtouyyrKFRR6D/04DwkFGvHPXM3Qda/Jb4nPgI7hQLVM1q5HIBt2MzQNa57Z1DiiLAGa5Mi+O4Sz3Mpp6laPHO6InII3ITnX1QtI+EOX+m9ZxleOZ/j9PiuKoLi3aqXPuEoSye/Vhkm+LalbLtHhMS0R6zu7aZ3vP2jOjL7QVv4McxhcDnZIelAQibGIbULOapf3PuE1Vs9qeaOTdkVKr00gCQiw4NlBzDvf1Lxx+uP5r3Dgv5KQZRzWn+GRwz8jmDS8itUg7iB6vLuJCF5Uty4A9mVKkFR6MiJDachST/oHvHgD+B4SoUIitpF05AAAAAElFTkSuQmCC') +
+              : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAGA0lEQVRoge1a207bWBRdBtJwLYZhKDMVmlSK1LxNkPo+ZH6g8B6p5AuALwC+APoFoVLeoT8whPeRSt+CZKmZVu3AiIsRlEtCktGyjy8xzuXYhvahS0JJHJ/4rLP3XnuffcAPfGdQ7mM6jRLSAF4BxqsbewB2lRS2o35mpEQaJcwCyANIdLi1DGBNSWEzqmdHRqRRwjqAJclhtExOSUEP+/xIiDRKhhUWfL7ShTtBuJnqcw+/z4Ql0xNmMEwSSz4kuNIzSgpjSsqYJP/GeE185wYJroedRyiLNEpGLLzzrHSuk+83SgbxvOcyyRaDziWsRVZkSRDinpzPbwVGWIucuohsKynMS47fAQyls/BMSRmKJo3AFhG5wm2N1wF+Zs3zebbFfR0RxrXcJHQlgH+LMW616pR/WiIMEXfW3mtzXyeEGWsjKot8c4TOI98L+iKaR5PS6IUk88RLAO9F8UjrbYoYMOosNavpfmODIiwRXRR/G3ohaWVo1RU/c30jV8ab2mV8qVGzHWBOLyTLZiWs5Rolg/C3ySOi0tXP/k4aEwOwSBKPJs7Rp16ABJTe+p1xVX0It/owqqdDEMRoqd3RFxqDPh20Ig6VEPVC0i5RSCD+6wl6HlW7GksSlUMV11/GrUs5NasFLusDE9ELSVphXemtJwaT/8JyIRvxNNCfBmIiNdR04LII3DSrbe0yjqvyJF/ppptqVlt+MCLCEh/oOkPPP6N38Mb5cnQBGFsEqmXg5j3QMwoMzwGnr4HYbybBq13gZAOom/FO63zdf2qQArCsZrUN2TlJy69eSDKYV+6Q4MpP75ivHzPA53ngaBW4eGuSOt0A/lsGPmXMz0+3TFJcTfFbPfFbfnwlhON+iQhlWmA82CQ4ocQ7c6KcfL3DHuls0yT6Sx4YnLXJDCQOIRRv5yGIJBgP8Sdisj2qubpc5UGJmo+W49ifVmzL8HcpGhQPvZCUKiCliIhEN0tr2OCqHuSA8gwQ/92MkU7gxEmeVqGrTTgpxPXbUrtGWYus0I9thRIraagRQUIDf7Qn4yZhKRiFQIyhfMfUr3yblokVWSJ6k8xSnc7eNN/RjowfCYiFoDUFer1S3gW6JiJ8Nt30EMbEhU+vzSIztuRYjRLsR8IHLjlf7HZ+MrWWEXxNmbvapt4jGSqZRYSkGUetSNTPzHsui5YMQ2ajJUNks6mw4wT54Ok2ShnzzIPCUGshzawCRKy5FqvrTZe0RWzQGvw79m67XZjKmxJrLsICjtZa55gxXy+6F4sYsEtxTqhXdRTLC8ulSDaWoCLsolfN+8YUhOsJV709H7Cudr0LlVEtzqBcN+shEyThdR941OnAbF8pirKJqXyupTRTtQSReiVmXW1j7oBErB0d9xM2WEd5J9ZKYtuR4WKwwBSoORbpGrJ5ZI9lt71irJmGX1px0JYE26uNErawr2zfIcP4OHEKXm66PA3wjpCNEfpJunI4muifPjKvsFCkGjExTq63yxMJsZNMYF/J4HmDC5A3Yq36jy0ClePHVhwuu/b1HSFlEfHD5ZtD1bEK44Qu1mWys6tbWmZyPWckzlPTGiRw/XHCuk+q4Rek+mVrVL/UppwrdDEGNV2kpyuhccgc5Oxm9vWnn+19vJrVpLor0kTUrGacMplb1CfOFyTD4o9uNrHqr2Z+ZMSp1c2XcVSORnh9Q81q3k599ETgkNnjg0nGzi10K7rX+bZpHbrblPcY5A4Zxk2xcjzCvTpd9027Aa0QtouyyrKFRR6D/04DwkFGvHPXM3Qda/Jb4nPgI7hQLVM1q5HIBt2MzQNa57Z1DiiLAGa5Mi+O4Sz3Mpp6laPHO6InII3ITnX1QtI+EOX+m9ZxleOZ/j9PiuKoLi3aqXPuEoSye/Vhkm+LalbLtHhMS0R6zu7aZ3vP2jOjL7QVv4McxhcDnZIelAQibGIbULOapf3PuE1Vs9qeaOTdkVKr00gCQiw4NlBzDvf1Lxx+uP5r3Dgv5KQZRzWn+GRwz8jmDS8itUg7iB6vLuJCF5Uty4A9mVKkFR6MiJDachST/oHvHgD+B4SoUIitpF05AAAAAElFTkSuQmCC") +
             '" alt="' +
             redacto.lang.icon +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '" title="' +
             redacto.lang.icon +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '">';
-          html += '   </button>';
-          html += '</div>';
+          html += "   </button>";
+          html += "</div>";
         }
 
         if (redacto.parameters.showAlertSmall === true) {
@@ -1067,21 +1067,21 @@ var redacto = {
           html +=
             '   <button type="button" id="redactoManager" aria-label="' +
             redacto.lang.alertSmall +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '" title="' +
             redacto.lang.alertSmall +
-            ' ' +
+            " " +
             redacto.lang.modalWindow +
             '">';
-          html += '       ' + redacto.lang.alertSmall;
+          html += "       " + redacto.lang.alertSmall;
           html += '       <span id="redactoDot">';
           html += '           <span id="redactoDotGreen"></span>';
           html += '           <span id="redactoDotYellow"></span>';
           html += '           <span id="redactoDotRed"></span>';
-          html += '       </span>';
+          html += "       </span>";
           if (redacto.parameters.cookieslist === true) {
-            html += '   </button><!-- @whitespace';
+            html += "   </button><!-- @whitespace";
             html +=
               '   --><button type="button" id="redactoCookiesNumber" aria-expanded="false" aria-controls="redactoCookiesListContainer">0</button>';
             html += '   <div id="redactoCookiesListContainer">';
@@ -1089,35 +1089,35 @@ var redacto = {
               html +=
                 '       <button type="button" id="redactoClosePanelCookie" aria-label="' +
                 redacto.lang.close +
-                ' (' +
+                " (" +
                 redacto.lang.reload +
                 ')" title="' +
                 redacto.lang.close +
-                ' (' +
+                " (" +
                 redacto.lang.reload +
                 ')">';
             } else {
               html +=
                 '       <button type="button" id="redactoClosePanelCookie">';
             }
-            html += '           ' + redacto.lang.close;
-            html += '       </button>';
+            html += "           " + redacto.lang.close;
+            html += "       </button>";
             html +=
               '       <div class="redactoCookiesListMain" id="redactoCookiesTitle">';
             html +=
               '            <span class="redactoH2" role="heading" aria-level="3" id="redactoCookiesNumberBis">0 cookie</span>';
-            html += '       </div>';
+            html += "       </div>";
             html += '       <div id="redactoCookiesList"></div>';
-            html += '    </div>';
+            html += "    </div>";
           } else {
-            html += '   </div>';
+            html += "   </div>";
           }
-          html += '</div>';
+          html += "</div>";
         }
 
         redacto.addInternalScript(
-          redacto.cdn + 'advertising' + (useMinifiedJS ? '.min' : '') + '.js',
-          '',
+          redacto.cdn + "advertising" + (useMinifiedJS ? ".min" : "") + ".js",
+          "",
           function () {
             if (
               redactoNoAdBlocker === true ||
@@ -1135,8 +1135,8 @@ var redacto = {
                         // Append the wrapper to the body
                         document.body.appendChild(wrapper);*/
 
-              div.id = 'redactoRoot';
-              if (redacto.parameters.bodyPosition === 'top') {
+              div.id = "redactoRoot";
+              if (redacto.parameters.bodyPosition === "top") {
                 // Prepend redacto: #redactoRoot first-child of the body for better accessibility
                 var bodyFirstChild = body.firstChild;
                 body.insertBefore(div, bodyFirstChild);
@@ -1146,32 +1146,32 @@ var redacto = {
               }
 
               redacto.userInterface.addClass(
-                'redactoRoot',
-                'redactoSize-' + redacto.parameters.orientation
+                "redactoRoot",
+                "redactoSize-" + redacto.parameters.orientation
               );
 
-              div.setAttribute('data-nosnippet', 'true');
-              div.setAttribute('lang', language);
-              div.setAttribute('role', 'region');
-              div.setAttribute('aria-labelledby', 'tac_title');
+              div.setAttribute("data-nosnippet", "true");
+              div.setAttribute("lang", language);
+              div.setAttribute("role", "region");
+              div.setAttribute("aria-labelledby", "tac_title");
 
               div.innerHTML = html;
 
               //ie compatibility
               var tacRootAvailableEvent;
-              if (typeof Event === 'function') {
-                tacRootAvailableEvent = new Event('tac.root_available');
-              } else if (typeof document.createEvent === 'function') {
-                tacRootAvailableEvent = document.createEvent('Event');
+              if (typeof Event === "function") {
+                tacRootAvailableEvent = new Event("tac.root_available");
+              } else if (typeof document.createEvent === "function") {
+                tacRootAvailableEvent = document.createEvent("Event");
                 tacRootAvailableEvent.initEvent(
-                  'tac.root_available',
+                  "tac.root_available",
                   true,
                   true
                 );
               }
               //end ie compatibility
 
-              if (typeof window.dispatchEvent === 'function') {
+              if (typeof window.dispatchEvent === "function") {
                 window.dispatchEvent(tacRootAvailableEvent);
               }
 
@@ -1192,7 +1192,7 @@ var redacto = {
 
               redacto.job.push = function (id) {
                 // ie <9 hack
-                if (typeof redacto.job.indexOf === 'undefined') {
+                if (typeof redacto.job.indexOf === "undefined") {
                   redacto.job.indexOf = function (obj, start) {
                     var i,
                       j = this.length;
@@ -1214,7 +1214,7 @@ var redacto = {
 
               if (
                 document.location.hash === redacto.hashtag &&
-                redacto.hashtag !== ''
+                redacto.hashtag !== ""
               ) {
                 redacto.userInterface.openPanel();
               }
@@ -1234,23 +1234,23 @@ var redacto = {
                 orientation +
                 ' redacto-display-block" role="alert" aria-live="polite">';
               html += '   <p id="redactoDisclaimerAlert">';
-              html += '       ' + redacto.lang.adblock + '<br/>';
+              html += "       " + redacto.lang.adblock + "<br/>";
               html +=
-                '       <strong>' + redacto.lang.adblock_call + '</strong>';
-              html += '   </p>';
+                "       <strong>" + redacto.lang.adblock_call + "</strong>";
+              html += "   </p>";
               html +=
                 '   <button type="button" class="redactoCTAButton" id="redactoCTAButton">';
-              html += '       ' + redacto.lang.reload;
-              html += '   </button>';
-              html += '</div>';
+              html += "       " + redacto.lang.reload;
+              html += "   </button>";
+              html += "</div>";
               html +=
                 '<div role="heading" aria-level="2" id="tac_title" class="tac_visually-hidden">' +
                 redacto.lang.title +
-                '</div>';
+                "</div>";
               html += '<div id="redactoPremium"></div>';
 
-              div.id = 'redactoRoot';
-              if (redacto.parameters.bodyPosition === 'top') {
+              div.id = "redactoRoot";
+              if (redacto.parameters.bodyPosition === "top") {
                 // Prepend redacto: #redactoRoot first-child of the body for better accessibility
                 var bodyFirstChild = body.firstChild;
                 body.insertBefore(div, bodyFirstChild);
@@ -1259,10 +1259,10 @@ var redacto = {
                 body.appendChild(div, body);
               }
 
-              div.setAttribute('data-nosnippet', 'true');
-              div.setAttribute('lang', language);
-              div.setAttribute('role', 'region');
-              div.setAttribute('aria-labelledby', 'tac_title');
+              div.setAttribute("data-nosnippet", "true");
+              div.setAttribute("lang", language);
+              div.setAttribute("role", "region");
+              div.setAttribute("aria-labelledby", "tac_title");
 
               div.innerHTML = html;
             }
@@ -1270,37 +1270,37 @@ var redacto = {
         }
         if (redacto.parameters.closePopup === true) {
           setTimeout(function () {
-            var closeElement = document.getElementById('redactoAlertBig'),
-              closeButton = document.createElement('button');
+            var closeElement = document.getElementById("redactoAlertBig"),
+              closeButton = document.createElement("button");
             if (closeElement) {
               closeButton.innerHTML =
                 '<span aria-hidden="true">X</span><span class="tac_visually-hidden">' +
                 redacto.lang.closeBanner +
-                '</span>';
-              closeButton.setAttribute('id', 'redactoCloseCross');
-              closeElement.insertAdjacentElement('beforeend', closeButton);
+                "</span>";
+              closeButton.setAttribute("id", "redactoCloseCross");
+              closeElement.insertAdjacentElement("beforeend", closeButton);
             }
           }, 100);
         }
 
         if (redacto.parameters.groupServices === true) {
-          var tac_group_style = document.createElement('style');
-          tac_group_style.innerHTML = '.redactoTitle{display:none}';
+          var tac_group_style = document.createElement("style");
+          tac_group_style.innerHTML = ".redactoTitle{display:none}";
           document.head.appendChild(tac_group_style);
           var cats = document.querySelectorAll('[id^="redactoServicesTitle_"]');
           Array.prototype.forEach.call(cats, function (item) {
             var cat = item
-              .getAttribute('id')
-              .replace(/^(redactoServicesTitle_)/, '');
-            if (cat !== 'mandatory') {
-              var html = '';
+              .getAttribute("id")
+              .replace(/^(redactoServicesTitle_)/, "");
+            if (cat !== "mandatory") {
+              var html = "";
               html += '<li  class="redactoLine">';
               html += '   <div class="redactoName">';
               html +=
                 '       <span class="redactoH3" role="heading" aria-level="3">' +
                 redacto.lang[cat].title +
-                '</span>';
-              html += '       <span>' + redacto.lang[cat].details + '</span>';
+                "</span>";
+              html += "       <span>" + redacto.lang[cat].details + "</span>";
               html +=
                 '   <button type="button" aria-expanded="false" class="redacto-toggle-group" id="redacto-toggle-group-' +
                 cat +
@@ -1309,13 +1309,13 @@ var redacto = {
                 ' <span id="redactoCounter-' +
                 cat +
                 '"></span></button>';
-              html += '   </div>';
+              html += "   </div>";
               html +=
                 '   <div class="redactoAsk" id="redacto-group-' + cat + '">';
               html +=
                 '       <button type="button" aria-label="' +
                 redacto.lang.allow +
-                ' ' +
+                " " +
                 redacto.lang[cat].title +
                 '" class="redactoAllow" id="redacto-accept-group-' +
                 cat +
@@ -1323,11 +1323,11 @@ var redacto = {
               html +=
                 '           <span class="redactoCheck" aria-hidden="true"></span> ' +
                 redacto.lang.allow;
-              html += '       </button> ';
+              html += "       </button> ";
               html +=
                 '       <button type="button" aria-label="' +
                 redacto.lang.deny +
-                ' ' +
+                " " +
                 redacto.lang[cat].title +
                 '" class="redactoDeny" id="redacto-reject-group-' +
                 cat +
@@ -1335,52 +1335,52 @@ var redacto = {
               html +=
                 '           <span class="redactoCross" aria-hidden="true"></span> ' +
                 redacto.lang.deny;
-              html += '       </button>';
-              html += '   </div>';
-              html += '</li>';
-              var ul = document.createElement('ul');
+              html += "       </button>";
+              html += "   </div>";
+              html += "</li>";
+              var ul = document.createElement("ul");
               ul.innerHTML = html;
               item.insertBefore(
                 ul,
-                item.querySelector('#redactoServices_' + cat + '')
+                item.querySelector("#redactoServices_" + cat + "")
               );
-              document.querySelector('#redactoServices_' + cat).style.display =
-                'none';
+              document.querySelector("#redactoServices_" + cat).style.display =
+                "none";
               redacto.addClickEventToId(
-                'redacto-toggle-group-' + cat,
+                "redacto-toggle-group-" + cat,
                 function () {
-                  redacto.userInterface.toggle('redactoServices_' + cat);
+                  redacto.userInterface.toggle("redactoServices_" + cat);
                   if (
-                    document.getElementById('redactoServices_' + cat).style
-                      .display == 'block'
+                    document.getElementById("redactoServices_" + cat).style
+                      .display == "block"
                   ) {
                     redacto.userInterface.addClass(
-                      'redactoServicesTitle_' + cat,
-                      'redactoIsExpanded'
+                      "redactoServicesTitle_" + cat,
+                      "redactoIsExpanded"
                     );
                     document
-                      .getElementById('redacto-toggle-group-' + cat)
-                      .setAttribute('aria-expanded', 'true');
+                      .getElementById("redacto-toggle-group-" + cat)
+                      .setAttribute("aria-expanded", "true");
                   } else {
                     redacto.userInterface.removeClass(
-                      'redactoServicesTitle_' + cat,
-                      'redactoIsExpanded'
+                      "redactoServicesTitle_" + cat,
+                      "redactoIsExpanded"
                     );
                     document
-                      .getElementById('redacto-toggle-group-' + cat)
-                      .setAttribute('aria-expanded', 'false');
+                      .getElementById("redacto-toggle-group-" + cat)
+                      .setAttribute("aria-expanded", "false");
                   }
                   //redacto.initEvents.resizeEvent();
                 }
               );
               redacto.addClickEventToId(
-                'redacto-accept-group-' + cat,
+                "redacto-accept-group-" + cat,
                 function () {
                   redacto.userInterface.respondAll(true, cat);
                 }
               );
               redacto.addClickEventToId(
-                'redacto-reject-group-' + cat,
+                "redacto-reject-group-" + cat,
                 function () {
                   redacto.userInterface.respondAll(false, cat);
                 }
@@ -1392,16 +1392,16 @@ var redacto = {
         // add info about the services on the main banner
         if (
           redacto.parameters.partnersList === true &&
-          (redacto.parameters.orientation === 'middle' ||
-            redacto.parameters.orientation === 'popup')
+          (redacto.parameters.orientation === "middle" ||
+            redacto.parameters.orientation === "popup")
         ) {
           setTimeout(function () {
             var tacPartnersInfoParent = document.getElementById(
-              'redactoDisclaimerAlert'
+              "redactoDisclaimerAlert"
             );
             if (tacPartnersInfoParent !== null) {
               tacPartnersInfoParent.insertAdjacentHTML(
-                'beforeend',
+                "beforeend",
                 '<div class="redactoPartnersList"><b>' +
                   redacto.lang.ourpartners +
                   ' <span id="redactoCounter-all"></span></b> <ul id="redactoCounter-list"></ul></div>'
@@ -1412,71 +1412,71 @@ var redacto = {
 
         // add a save button
         setTimeout(function () {
-          var tacSaveButtonParent = document.getElementById('redactoServices');
+          var tacSaveButtonParent = document.getElementById("redactoServices");
           if (tacSaveButtonParent !== null) {
             tacSaveButtonParent.insertAdjacentHTML(
-              'beforeend',
+              "beforeend",
               '<div id="redactoSave"><button class="redactoAllow" id="redactoSaveButton">' +
                 redacto.lang.save +
-                '</button></div>'
+                "</button></div>"
             );
           }
         }, 100);
 
-        redacto.userInterface.color('', true);
+        redacto.userInterface.color("", true);
 
         // add a little timeout to be sure everything is accessible
         setTimeout(function () {
           // Setup events
-          redacto.addClickEventToId('redactoCloseCross', function () {
+          redacto.addClickEventToId("redactoCloseCross", function () {
             redacto.userInterface.closeAlert();
           });
-          redacto.addClickEventToId('redactoPersonalize', function () {
+          redacto.addClickEventToId("redactoPersonalize", function () {
             redacto.userInterface.openPanel();
           });
-          redacto.addClickEventToId('redactoPersonalize2', function () {
+          redacto.addClickEventToId("redactoPersonalize2", function () {
             redacto.userInterface.respondAll(true);
           });
-          redacto.addClickEventToId('redactoManager', function () {
+          redacto.addClickEventToId("redactoManager", function () {
             redacto.userInterface.openPanel();
           });
-          redacto.addClickEventToId('redactoBack', function () {
+          redacto.addClickEventToId("redactoBack", function () {
             redacto.userInterface.closePanel();
           });
-          redacto.addClickEventToId('redactoClosePanel', function () {
+          redacto.addClickEventToId("redactoClosePanel", function () {
             redacto.userInterface.closePanel();
           });
-          redacto.addClickEventToId('redactoClosePanelCookie', function () {
+          redacto.addClickEventToId("redactoClosePanelCookie", function () {
             redacto.userInterface.closePanel();
           });
-          redacto.addClickEventToId('redactoPrivacyUrl', function () {
+          redacto.addClickEventToId("redactoPrivacyUrl", function () {
             document.location = redacto.parameters.privacyUrl;
           });
-          redacto.addClickEventToId('redactoPrivacyUrlDialog', function () {
+          redacto.addClickEventToId("redactoPrivacyUrlDialog", function () {
             document.location = redacto.parameters.privacyUrl;
           });
-          redacto.addClickEventToId('redactoCookiesNumber', function () {
+          redacto.addClickEventToId("redactoCookiesNumber", function () {
             redacto.userInterface.toggleCookiesList();
           });
-          redacto.addClickEventToId('redactoAllAllowed', function () {
+          redacto.addClickEventToId("redactoAllAllowed", function () {
             redacto.userInterface.respondAll(true);
           });
-          redacto.addClickEventToId('redactoAllDenied', function () {
+          redacto.addClickEventToId("redactoAllDenied", function () {
             redacto.userInterface.respondAll(false);
           });
-          redacto.addClickEventToId('redactoAllDenied2', function () {
-            redacto.userInterface.respondAll(false, '', true);
+          redacto.addClickEventToId("redactoAllDenied2", function () {
+            redacto.userInterface.respondAll(false, "", true);
             if (redacto.reloadThePage === true) {
               window.location.reload();
             }
           });
-          redacto.addClickEventToId('redactoCloseAlert', function () {
+          redacto.addClickEventToId("redactoCloseAlert", function () {
             redacto.userInterface.openPanel();
           });
-          redacto.addClickEventToId('redactoCTAButton', function () {
+          redacto.addClickEventToId("redactoCTAButton", function () {
             location.reload();
           });
-          redacto.addClickEventToId('redactoSaveButton', function () {
+          redacto.addClickEventToId("redactoSaveButton", function () {
             var timeoutSaveButton = 0;
             redacto.job.forEach(function (id) {
               if (redacto.state[id] !== true && redacto.state[id] !== false) {
@@ -1486,24 +1486,24 @@ var redacto = {
             });
             setTimeout(redacto.userInterface.closePanel, timeoutSaveButton);
           });
-          var toggleBtns = document.getElementsByClassName('catToggleBtn'),
+          var toggleBtns = document.getElementsByClassName("catToggleBtn"),
             i;
           for (i = 0; i < toggleBtns.length; i++) {
             toggleBtns[i].dataset.index = i;
             redacto.addClickEventToElement(toggleBtns[i], function () {
               if (!redacto.parameters.showDetailsOnClick) return false;
               redacto.userInterface.toggle(
-                'redactoDetails' + cat[this.dataset.index],
-                'redactoInfoBox'
+                "redactoDetails" + cat[this.dataset.index],
+                "redactoInfoBox"
               );
               if (
                 document.getElementById(
-                  'redactoDetails' + cat[this.dataset.index]
-                ).style.display === 'block'
+                  "redactoDetails" + cat[this.dataset.index]
+                ).style.display === "block"
               ) {
-                this.setAttribute('aria-expanded', 'true');
+                this.setAttribute("aria-expanded", "true");
               } else {
-                this.setAttribute('aria-expanded', 'false');
+                this.setAttribute("aria-expanded", "false");
               }
               return false;
             });
@@ -1511,30 +1511,30 @@ var redacto = {
 
           // accessibility: on click on "Allow" in the site (not in TAC module), move focus to the loaded service's parent
           var allowBtnsInSite = document.querySelectorAll(
-            '.tac_activate .redactoAllow'
+            ".tac_activate .redactoAllow"
           );
           for (i = 0; i < allowBtnsInSite.length; i++) {
             redacto.addClickEventToElement(allowBtnsInSite[i], function () {
               if (
-                this.closest('.tac_activate') !== null &&
-                this.closest('.tac_activate').parentNode !== null
+                this.closest(".tac_activate") !== null &&
+                this.closest(".tac_activate").parentNode !== null
               ) {
-                this.closest('.tac_activate').parentNode.setAttribute(
-                  'tabindex',
-                  '-1'
+                this.closest(".tac_activate").parentNode.setAttribute(
+                  "tabindex",
+                  "-1"
                 );
-                this.closest('.tac_activate').parentNode.focus();
+                this.closest(".tac_activate").parentNode.focus();
               }
             });
           }
 
-          var allowBtns = document.getElementsByClassName('redactoAllow');
+          var allowBtns = document.getElementsByClassName("redactoAllow");
           for (i = 0; i < allowBtns.length; i++) {
             redacto.addClickEventToElement(allowBtns[i], function () {
               redacto.userInterface.respond(this, true);
             });
           }
-          var denyBtns = document.getElementsByClassName('redactoDeny');
+          var denyBtns = document.getElementsByClassName("redactoDeny");
           for (i = 0; i < denyBtns.length; i++) {
             redacto.addClickEventToElement(denyBtns[i], function () {
               redacto.userInterface.respond(this, false);
@@ -1548,12 +1548,12 @@ var redacto = {
     });
   },
   addService: function (serviceId) {
-    'use strict';
-    var html = '',
+    "use strict";
+    var html = "",
       s = redacto.services,
       service = s[serviceId];
 
-    if (typeof service === 'undefined') {
+    if (typeof service === "undefined") {
       var serviceToRemoveIndex = redacto.job.indexOf(serviceId);
       if (serviceToRemoveIndex !== -1) {
         redacto.job.splice(serviceToRemoveIndex, 1);
@@ -1567,24 +1567,24 @@ var redacto = {
 
     var cookie = redacto.cookie.read(),
       hostname = document.location.hostname,
-      hostRef = document.referrer.split('/')[2],
+      hostRef = document.referrer.split("/")[2],
       isNavigating =
         hostRef === hostname &&
         window.location.href !== redacto.parameters.privacyUrl,
       isAutostart = !service.needConsent,
-      isWaiting = cookie.indexOf(service.key + '=wait') >= 0,
-      isDenied = cookie.indexOf(service.key + '=false') >= 0,
+      isWaiting = cookie.indexOf(service.key + "=wait") >= 0,
+      isDenied = cookie.indexOf(service.key + "=false") >= 0,
       isAllowed =
-        cookie.indexOf(service.key + '=true') >= 0 ||
-        (!service.needConsent && cookie.indexOf(service.key + '=false') < 0),
+        cookie.indexOf(service.key + "=true") >= 0 ||
+        (!service.needConsent && cookie.indexOf(service.key + "=false") < 0),
       isResponded =
-        cookie.indexOf(service.key + '=false') >= 0 ||
-        cookie.indexOf(service.key + '=true') >= 0,
+        cookie.indexOf(service.key + "=false") >= 0 ||
+        cookie.indexOf(service.key + "=true") >= 0,
       isDNTRequested =
-        navigator.doNotTrack === '1' ||
-        navigator.doNotTrack === 'yes' ||
-        navigator.msDoNotTrack === '1' ||
-        window.doNotTrack === '1',
+        navigator.doNotTrack === "1" ||
+        navigator.doNotTrack === "yes" ||
+        navigator.msDoNotTrack === "1" ||
+        window.doNotTrack === "1",
       currentStatus = isAllowed
         ? redacto.lang.allowed
         : redacto.lang.disallowed,
@@ -1592,8 +1592,8 @@ var redacto = {
         undefined !== service.defaultState
           ? service.defaultState
           : undefined !== redacto.parameters.serviceDefaultState
-            ? redacto.parameters.serviceDefaultState
-            : 'wait';
+          ? redacto.parameters.serviceDefaultState
+          : "wait";
 
     if (redacto.added[service.key] !== true) {
       redacto.added[service.key] = true;
@@ -1603,33 +1603,33 @@ var redacto = {
       html +=
         '       <span class="redactoH3" role="heading" aria-level="4">' +
         service.name +
-        '</span>';
+        "</span>";
       html += '       <div class="redactoStatusInfo">';
       html +=
         '          <span class="tacCurrentStatus" id="tacCurrentStatus' +
         service.key +
         '">' +
         currentStatus +
-        '</span>';
+        "</span>";
       html += '          <span class="redactoReadmoreSeparator"> - </span>';
       html +=
         '          <span id="tacCL' +
         service.key +
         '" class="redactoListCookies"></span>';
-      html += '       </div>';
+      html += "       </div>";
       if (redacto.parameters.moreInfoLink == true) {
         var link;
-        if (redacto.getLanguage() === 'fr') {
-          link = '#'; // Service link removed for Redacto rebrand
+        if (redacto.getLanguage() === "fr") {
+          link = "#"; // Service link removed for Redacto rebrand
         } else {
-          link = '#'; // Service details link removed for Redacto rebrand
+          link = "#"; // Service details link removed for Redacto rebrand
         }
-        if (service.readmoreLink !== undefined && service.readmoreLink !== '') {
+        if (service.readmoreLink !== undefined && service.readmoreLink !== "") {
           link = service.readmoreLink;
         }
         if (
           redacto.parameters.readmoreLink !== undefined &&
-          redacto.parameters.readmoreLink !== ''
+          redacto.parameters.readmoreLink !== ""
         ) {
           link = redacto.parameters.readmoreLink;
         }
@@ -1638,38 +1638,38 @@ var redacto = {
           link +
           '" target="_blank" rel="noreferrer noopener nofollow" title="' +
           redacto.lang.more +
-          ' : ' +
+          " : " +
           redacto.lang.cookieDetail +
-          ' ' +
+          " " +
           service.name +
-          ' ' +
+          " " +
           redacto.lang.ourSite +
-          ' ' +
+          " " +
           redacto.lang.newWindow +
           '" class="redactoReadmoreInfo">' +
           redacto.lang.more +
-          '</a>';
+          "</a>";
         html += '       <span class="redactoReadmoreSeparator"> - </span>';
         html +=
           '       <a href="' +
           service.uri +
           '" target="_blank" rel="noreferrer noopener" title="' +
           redacto.lang.source +
-          ' ' +
+          " " +
           service.name +
-          ' ' +
+          " " +
           redacto.lang.newWindow +
           '" class="redactoReadmoreOfficial">' +
           redacto.lang.source +
-          '</a>';
+          "</a>";
       }
 
-      html += '   </div>';
+      html += "   </div>";
       html += '   <div class="redactoAsk">';
       html +=
         '       <button type="button" aria-label="' +
         redacto.lang.allow +
-        ' ' +
+        " " +
         service.name +
         '" id="' +
         service.key +
@@ -1677,11 +1677,11 @@ var redacto = {
       html +=
         '           <span class="redactoCheck" aria-hidden="true"></span> ' +
         redacto.lang.allow;
-      html += '       </button> ';
+      html += "       </button> ";
       html +=
         '       <button type="button" aria-label="' +
         redacto.lang.deny +
-        ' ' +
+        " " +
         service.name +
         '" id="' +
         service.key +
@@ -1689,35 +1689,35 @@ var redacto = {
       html +=
         '           <span class="redactoCross" aria-hidden="true"></span> ' +
         redacto.lang.deny;
-      html += '       </button>';
-      html += '   </div>';
-      html += '</li>';
+      html += "       </button>";
+      html += "   </div>";
+      html += "</li>";
 
       redacto.userInterface.css(
-        'redactoServicesTitle_' + service.type,
-        'display',
-        'block'
+        "redactoServicesTitle_" + service.type,
+        "display",
+        "block"
       );
 
-      if (document.getElementById('redactoServices_' + service.type) !== null) {
-        document.getElementById('redactoServices_' + service.type).innerHTML +=
+      if (document.getElementById("redactoServices_" + service.type) !== null) {
+        document.getElementById("redactoServices_" + service.type).innerHTML +=
           html;
       }
 
-      redacto.userInterface.css('redactoNoServicesTitle', 'display', 'none');
+      redacto.userInterface.css("redactoNoServicesTitle", "display", "none");
 
       redacto.userInterface.order(service.type);
 
-      redacto.addClickEventToId(service.key + 'Allowed', function () {
+      redacto.addClickEventToId(service.key + "Allowed", function () {
         redacto.userInterface.respond(this, true);
       });
 
-      redacto.addClickEventToId(service.key + 'Denied', function () {
+      redacto.addClickEventToId(service.key + "Denied", function () {
         redacto.userInterface.respond(this, false);
       });
     }
 
-    redacto.pro('!' + service.key + '=' + isAllowed);
+    redacto.pro("!" + service.key + "=" + isAllowed);
 
     // allow by default for non EU
     if (isResponded === false && redacto.user.bypass === true) {
@@ -1733,29 +1733,29 @@ var redacto = {
     ) {
       if (
         !isAllowed ||
-        (!service.needConsent && cookie.indexOf(service.key + '=false') < 0)
+        (!service.needConsent && cookie.indexOf(service.key + "=false") < 0)
       ) {
         redacto.cookie.create(service.key, true);
       }
       if (redacto.launch[service.key] !== true) {
         redacto.launch[service.key] = true;
-        redacto.sendEvent(service.key + '_consentModeOk');
+        redacto.sendEvent(service.key + "_consentModeOk");
         if (
-          (typeof redactoMagic === 'undefined' ||
-            redactoMagic.indexOf('_' + service.key + '_') < 0) &&
+          (typeof redactoMagic === "undefined" ||
+            redactoMagic.indexOf("_" + service.key + "_") < 0) &&
           redacto.parameters.serverSide !== true
         ) {
           service.js();
         }
-        redacto.sendEvent(service.key + '_loaded');
+        redacto.sendEvent(service.key + "_loaded");
       }
       redacto.state[service.key] = true;
       redacto.userInterface.color(service.key, true);
     } else if (isDenied) {
-      if (typeof service.fallback === 'function') {
+      if (typeof service.fallback === "function") {
         if (
-          (typeof redactoMagic === 'undefined' ||
-            redactoMagic.indexOf('_' + service.key + '_') < 0) &&
+          (typeof redactoMagic === "undefined" ||
+            redactoMagic.indexOf("_" + service.key + "_") < 0) &&
           redacto.parameters.serverSide !== true
         ) {
           service.fallback();
@@ -1768,11 +1768,11 @@ var redacto = {
       isDNTRequested &&
       redacto.handleBrowserDNTRequest
     ) {
-      redacto.cookie.create(service.key, 'false');
-      if (typeof service.fallback === 'function') {
+      redacto.cookie.create(service.key, "false");
+      if (typeof service.fallback === "function") {
         if (
-          (typeof redactoMagic === 'undefined' ||
-            redactoMagic.indexOf('_' + service.key + '_') < 0) &&
+          (typeof redactoMagic === "undefined" ||
+            redactoMagic.indexOf("_" + service.key + "_") < 0) &&
           redacto.parameters.serverSide !== true
         ) {
           service.fallback();
@@ -1784,23 +1784,23 @@ var redacto = {
       redacto.cookie.create(service.key, state);
 
       if (true === state) {
-        redacto.sendEvent(service.key + '_consentModeOk');
+        redacto.sendEvent(service.key + "_consentModeOk");
       }
 
       if (
-        (typeof redactoMagic === 'undefined' ||
-          redactoMagic.indexOf('_' + service.key + '_') < 0) &&
+        (typeof redactoMagic === "undefined" ||
+          redactoMagic.indexOf("_" + service.key + "_") < 0) &&
         redacto.parameters.serverSide !== true
       ) {
-        if (true === state && typeof service.js === 'function') {
+        if (true === state && typeof service.js === "function") {
           service.js();
-        } else if (typeof service.fallback === 'function') {
+        } else if (typeof service.fallback === "function") {
           service.fallback();
         }
       }
 
       if (true === state) {
-        redacto.sendEvent(service.key + '_loaded');
+        redacto.sendEvent(service.key + "_loaded");
       }
 
       if (true === state || false === state) {
@@ -1808,22 +1808,22 @@ var redacto = {
       }
       redacto.userInterface.color(service.key, state);
 
-      if ('wait' === state) {
+      if ("wait" === state) {
         redacto.userInterface.openAlert();
       }
     }
 
     redacto.cookie.checkCount(service.key);
-    redacto.sendEvent(service.key + '_added');
+    redacto.sendEvent(service.key + "_added");
   },
   sendEvent: function (event_key) {
     if (event_key !== undefined) {
       //ie compatibility
       var send_event_item;
-      if (typeof Event === 'function') {
+      if (typeof Event === "function") {
         send_event_item = new Event(event_key);
-      } else if (typeof document.createEvent === 'function') {
-        send_event_item = document.createEvent('Event');
+      } else if (typeof document.createEvent === "function") {
+        send_event_item = document.createEvent("Event");
         send_event_item.initEvent(event_key, true, true);
       }
       //end ie compatibility
@@ -1832,7 +1832,7 @@ var redacto = {
     }
   },
   cleanArray: function cleanArray(arr) {
-    'use strict';
+    "use strict";
     var i,
       len = arr.length,
       out = [],
@@ -1863,26 +1863,26 @@ var redacto = {
   setConsent: function (id, status) {
     if (status === true) {
       redacto.userInterface.respond(
-        document.getElementById(id + 'Allowed'),
+        document.getElementById(id + "Allowed"),
         true
       );
     } else if (status === false) {
       redacto.userInterface.respond(
-        document.getElementById(id + 'Denied'),
+        document.getElementById(id + "Denied"),
         false
       );
     }
   },
   userInterface: {
     css: function (id, property, value) {
-      'use strict';
+      "use strict";
       if (document.getElementById(id) !== null) {
         if (
-          property == 'display' &&
-          value == 'none' &&
-          (id == 'redacto' || id == 'redactoBack' || id == 'redactoAlertBig')
+          property == "display" &&
+          value == "none" &&
+          (id == "redacto" || id == "redactoBack" || id == "redactoAlertBig")
         ) {
-          document.getElementById(id).style['opacity'] = '0';
+          document.getElementById(id).style["opacity"] = "0";
 
           /*setTimeout(function() {*/ document.getElementById(id).style[
             property
@@ -1891,35 +1891,35 @@ var redacto = {
           document.getElementById(id).style[property] = value;
 
           if (
-            property == 'display' &&
-            value == 'block' &&
-            (id == 'redacto' || id == 'redactoAlertBig')
+            property == "display" &&
+            value == "block" &&
+            (id == "redacto" || id == "redactoAlertBig")
           ) {
-            document.getElementById(id).style['opacity'] = '1';
+            document.getElementById(id).style["opacity"] = "1";
           }
 
           if (
-            property == 'display' &&
-            value == 'block' &&
-            id == 'redactoBack'
+            property == "display" &&
+            value == "block" &&
+            id == "redactoBack"
           ) {
-            document.getElementById(id).style['opacity'] = '0.7';
+            document.getElementById(id).style["opacity"] = "0.7";
           }
 
           if (
-            property == 'display' &&
-            value == 'block' &&
-            id == 'redactoAlertBig' &&
-            (redacto.parameters.orientation == 'middle' ||
-              redacto.parameters.orientation == 'popup')
+            property == "display" &&
+            value == "block" &&
+            id == "redactoAlertBig" &&
+            (redacto.parameters.orientation == "middle" ||
+              redacto.parameters.orientation == "popup")
           ) {
-            redacto.userInterface.focusTrap('redactoAlertBig');
+            redacto.userInterface.focusTrap("redactoAlertBig");
           }
         }
       }
     },
     addClass: function (id, className) {
-      'use strict';
+      "use strict";
       if (
         document.getElementById(id) !== null &&
         document.getElementById(id).classList !== undefined
@@ -1928,7 +1928,7 @@ var redacto = {
       }
     },
     removeClass: function (id, className) {
-      'use strict';
+      "use strict";
       if (
         document.getElementById(id) !== null &&
         document.getElementById(id).classList !== undefined
@@ -1937,7 +1937,7 @@ var redacto = {
       }
     },
     respondAll: function (status, type, allowSafeAnalytics) {
-      'use strict';
+      "use strict";
       var s = redacto.services,
         service,
         key,
@@ -1945,8 +1945,8 @@ var redacto = {
 
       for (index = 0; index < redacto.job.length; index += 1) {
         if (
-          typeof type !== 'undefined' &&
-          type !== '' &&
+          typeof type !== "undefined" &&
+          type !== "" &&
           s[redacto.job[index]].type !== type
         ) {
           continue;
@@ -1954,7 +1954,7 @@ var redacto = {
 
         if (
           allowSafeAnalytics &&
-          typeof s[redacto.job[index]].safeanalytic !== 'undefined' &&
+          typeof s[redacto.job[index]].safeanalytic !== "undefined" &&
           s[redacto.job[index]].safeanalytic === true
         ) {
           continue;
@@ -1964,66 +1964,66 @@ var redacto = {
         key = service.key;
         if (redacto.state[key] !== status) {
           if (status == true) {
-            redacto.sendEvent(key + '_consentModeOk');
+            redacto.sendEvent(key + "_consentModeOk");
           } else {
-            redacto.sendEvent(key + '_consentModeKo');
+            redacto.sendEvent(key + "_consentModeKo");
           }
 
           if (status === false && redacto.launch[key] === true) {
             redacto.reloadThePage = true;
-            if (redacto.checkIfExist('redactoClosePanel')) {
+            if (redacto.checkIfExist("redactoClosePanel")) {
               var ariaCloseValue =
                 document
-                  .getElementById('redactoClosePanel')
+                  .getElementById("redactoClosePanel")
                   .textContent.trim() +
-                ' (' +
+                " (" +
                 redacto.lang.reload +
-                ')';
+                ")";
               document
-                .getElementById('redactoClosePanel')
-                .setAttribute('aria-label', ariaCloseValue);
+                .getElementById("redactoClosePanel")
+                .setAttribute("aria-label", ariaCloseValue);
               document
-                .getElementById('redactoClosePanel')
-                .setAttribute('title', ariaCloseValue);
+                .getElementById("redactoClosePanel")
+                .setAttribute("title", ariaCloseValue);
             }
           }
           if (redacto.launch[key] !== true && status === true) {
-            redacto.pro('!' + key + '=engage');
+            redacto.pro("!" + key + "=engage");
 
             redacto.launch[key] = true;
             if (
-              (typeof redactoMagic === 'undefined' ||
-                redactoMagic.indexOf('_' + key + '_') < 0) &&
+              (typeof redactoMagic === "undefined" ||
+                redactoMagic.indexOf("_" + key + "_") < 0) &&
               redacto.parameters.serverSide !== true
             ) {
               redacto.services[key].js();
             }
-            redacto.sendEvent(key + '_loaded');
+            redacto.sendEvent(key + "_loaded");
           }
           var itemStatusElem = document.getElementById(
-            'tacCurrentStatus' + key
+            "tacCurrentStatus" + key
           );
           redacto.state[key] = status;
           redacto.cookie.create(key, status);
           redacto.userInterface.color(key, status);
           if (status == true) {
             itemStatusElem.innerHTML = redacto.lang.allowed;
-            redacto.sendEvent(key + '_allowed');
+            redacto.sendEvent(key + "_allowed");
           } else {
             itemStatusElem.innerHTML = redacto.lang.disallowed;
-            redacto.sendEvent(key + '_disallowed');
+            redacto.sendEvent(key + "_disallowed");
           }
         }
       }
     },
     respond: function (el, status) {
-      'use strict';
-      if (el.id === '') {
+      "use strict";
+      if (el.id === "") {
         return;
       }
-      var key = el.id.replace(new RegExp('(Eng[0-9]+|Allow|Deni)ed', 'g'), '');
+      var key = el.id.replace(new RegExp("(Eng[0-9]+|Allow|Deni)ed", "g"), "");
 
-      if (key.substring(0, 13) === 'redacto' || key === '') {
+      if (key.substring(0, 13) === "redacto" || key === "") {
         return;
       }
 
@@ -2033,60 +2033,60 @@ var redacto = {
       }
 
       if (status == true) {
-        redacto.sendEvent(key + '_consentModeOk');
+        redacto.sendEvent(key + "_consentModeOk");
       } else {
-        redacto.sendEvent(key + '_consentModeKo');
+        redacto.sendEvent(key + "_consentModeKo");
       }
 
       if (status === false && redacto.launch[key] === true) {
         redacto.reloadThePage = true;
-        if (redacto.checkIfExist('redactoClosePanel')) {
+        if (redacto.checkIfExist("redactoClosePanel")) {
           var ariaCloseValue =
-            document.getElementById('redactoClosePanel').textContent.trim() +
-            ' (' +
+            document.getElementById("redactoClosePanel").textContent.trim() +
+            " (" +
             redacto.lang.reload +
-            ')';
+            ")";
           document
-            .getElementById('redactoClosePanel')
-            .setAttribute('aria-label', ariaCloseValue);
+            .getElementById("redactoClosePanel")
+            .setAttribute("aria-label", ariaCloseValue);
           document
-            .getElementById('redactoClosePanel')
-            .setAttribute('title', ariaCloseValue);
+            .getElementById("redactoClosePanel")
+            .setAttribute("title", ariaCloseValue);
         }
       }
 
       // if not already launched... launch the service
       if (status === true) {
         if (redacto.launch[key] !== true) {
-          redacto.pro('!' + key + '=engage');
+          redacto.pro("!" + key + "=engage");
 
           redacto.launch[key] = true;
-          redacto.sendEvent(key + '_consentModeOk');
+          redacto.sendEvent(key + "_consentModeOk");
           if (
-            (typeof redactoMagic === 'undefined' ||
-              redactoMagic.indexOf('_' + key + '_') < 0) &&
+            (typeof redactoMagic === "undefined" ||
+              redactoMagic.indexOf("_" + key + "_") < 0) &&
             redacto.parameters.serverSide !== true
           ) {
             redacto.services[key].js();
           }
-          redacto.sendEvent(key + '_loaded');
+          redacto.sendEvent(key + "_loaded");
         }
       }
-      var itemStatusElem = document.getElementById('tacCurrentStatus' + key);
+      var itemStatusElem = document.getElementById("tacCurrentStatus" + key);
       redacto.state[key] = status;
       redacto.cookie.create(key, status);
       redacto.userInterface.color(key, status);
       if (status == true) {
         itemStatusElem.innerHTML = redacto.lang.allowed;
-        redacto.sendEvent(key + '_allowed');
+        redacto.sendEvent(key + "_allowed");
       } else {
         itemStatusElem.innerHTML = redacto.lang.disallowed;
-        redacto.sendEvent(key + '_disallowed');
+        redacto.sendEvent(key + "_disallowed");
       }
     },
     color: function (key, status) {
-      'use strict';
-      var c = 'redacto',
+      "use strict";
+      var c = "redacto",
         nbDenied = 0,
         nbPending = 0,
         nbAllowed = 0,
@@ -2094,41 +2094,41 @@ var redacto = {
         index,
         s = redacto.services;
 
-      if (key !== '') {
+      if (key !== "") {
         redacto.cookie.checkCount(key);
 
         if (status === true) {
-          redacto.userInterface.addClass(key + 'Line', 'redactoIsAllowed');
-          redacto.userInterface.removeClass(key + 'Line', 'redactoIsDenied');
+          redacto.userInterface.addClass(key + "Line", "redactoIsAllowed");
+          redacto.userInterface.removeClass(key + "Line", "redactoIsDenied");
           document
-            .getElementById(key + 'Allowed')
-            .setAttribute('aria-pressed', 'true');
+            .getElementById(key + "Allowed")
+            .setAttribute("aria-pressed", "true");
           document
-            .getElementById(key + 'Denied')
-            .setAttribute('aria-pressed', 'false');
+            .getElementById(key + "Denied")
+            .setAttribute("aria-pressed", "false");
         } else if (status === false) {
-          redacto.userInterface.removeClass(key + 'Line', 'redactoIsAllowed');
-          redacto.userInterface.addClass(key + 'Line', 'redactoIsDenied');
+          redacto.userInterface.removeClass(key + "Line", "redactoIsAllowed");
+          redacto.userInterface.addClass(key + "Line", "redactoIsDenied");
           document
-            .getElementById(key + 'Allowed')
-            .setAttribute('aria-pressed', 'false');
+            .getElementById(key + "Allowed")
+            .setAttribute("aria-pressed", "false");
           document
-            .getElementById(key + 'Denied')
-            .setAttribute('aria-pressed', 'true');
+            .getElementById(key + "Denied")
+            .setAttribute("aria-pressed", "true");
         } else {
           document
-            .getElementById(key + 'Allowed')
-            .setAttribute('aria-pressed', 'false');
+            .getElementById(key + "Allowed")
+            .setAttribute("aria-pressed", "false");
           document
-            .getElementById(key + 'Denied')
-            .setAttribute('aria-pressed', 'false');
+            .getElementById(key + "Denied")
+            .setAttribute("aria-pressed", "false");
         }
 
         // check if all services are allowed
         var sumToRemove = 0;
         for (index = 0; index < sum; index += 1) {
           if (
-            typeof s[redacto.job[index]].safeanalytic !== 'undefined' &&
+            typeof s[redacto.job[index]].safeanalytic !== "undefined" &&
             s[redacto.job[index]].safeanalytic === true
           ) {
             sumToRemove += 1;
@@ -2152,75 +2152,75 @@ var redacto = {
         };
 
         for (const [colorKey, value] of Object.entries(percentages)) {
-          redacto.userInterface.css(c + colorKey, 'width', value + '%');
+          redacto.userInterface.css(c + colorKey, "width", value + "%");
         }
 
         if (redacto.parameters.showAlertSmall === true) {
           const percentAllowed = percentages.DotGreen;
           const label =
             redacto.lang.alertSmall +
-            ' - ' +
+            " - " +
             percentAllowed +
-            '% ' +
+            "% " +
             redacto.lang.allowed +
-            ' ' +
+            " " +
             redacto.lang.modalWindow;
-          const managerEl = document.getElementById(c + 'Manager');
-          managerEl.setAttribute('aria-label', label);
-          managerEl.setAttribute('title', label);
+          const managerEl = document.getElementById(c + "Manager");
+          managerEl.setAttribute("aria-label", label);
+          managerEl.setAttribute("title", label);
         }
 
         if (nbDenied === 0 && nbPending === 0) {
-          redacto.userInterface.removeClass(c + 'AllDenied', c + 'IsSelected');
-          redacto.userInterface.addClass(c + 'AllAllowed', c + 'IsSelected');
+          redacto.userInterface.removeClass(c + "AllDenied", c + "IsSelected");
+          redacto.userInterface.addClass(c + "AllAllowed", c + "IsSelected");
 
-          redacto.userInterface.addClass(c + 'MainLineOffset', c + 'IsAllowed');
+          redacto.userInterface.addClass(c + "MainLineOffset", c + "IsAllowed");
           redacto.userInterface.removeClass(
-            c + 'MainLineOffset',
-            c + 'IsDenied'
+            c + "MainLineOffset",
+            c + "IsDenied"
           );
 
           document
-            .getElementById(c + 'AllDenied')
-            .setAttribute('aria-pressed', 'false');
+            .getElementById(c + "AllDenied")
+            .setAttribute("aria-pressed", "false");
           document
-            .getElementById(c + 'AllAllowed')
-            .setAttribute('aria-pressed', 'true');
+            .getElementById(c + "AllAllowed")
+            .setAttribute("aria-pressed", "true");
         } else if (nbAllowed === 0 && nbPending === 0) {
-          redacto.userInterface.removeClass(c + 'AllAllowed', c + 'IsSelected');
-          redacto.userInterface.addClass(c + 'AllDenied', c + 'IsSelected');
+          redacto.userInterface.removeClass(c + "AllAllowed", c + "IsSelected");
+          redacto.userInterface.addClass(c + "AllDenied", c + "IsSelected");
 
           redacto.userInterface.removeClass(
-            c + 'MainLineOffset',
-            c + 'IsAllowed'
+            c + "MainLineOffset",
+            c + "IsAllowed"
           );
-          redacto.userInterface.addClass(c + 'MainLineOffset', c + 'IsDenied');
+          redacto.userInterface.addClass(c + "MainLineOffset", c + "IsDenied");
 
           document
-            .getElementById(c + 'AllDenied')
-            .setAttribute('aria-pressed', 'true');
+            .getElementById(c + "AllDenied")
+            .setAttribute("aria-pressed", "true");
           document
-            .getElementById(c + 'AllAllowed')
-            .setAttribute('aria-pressed', 'false');
+            .getElementById(c + "AllAllowed")
+            .setAttribute("aria-pressed", "false");
         } else {
-          redacto.userInterface.removeClass(c + 'AllAllowed', c + 'IsSelected');
-          redacto.userInterface.removeClass(c + 'AllDenied', c + 'IsSelected');
+          redacto.userInterface.removeClass(c + "AllAllowed", c + "IsSelected");
+          redacto.userInterface.removeClass(c + "AllDenied", c + "IsSelected");
 
           redacto.userInterface.removeClass(
-            c + 'MainLineOffset',
-            c + 'IsAllowed'
+            c + "MainLineOffset",
+            c + "IsAllowed"
           );
           redacto.userInterface.removeClass(
-            c + 'MainLineOffset',
-            c + 'IsDenied'
+            c + "MainLineOffset",
+            c + "IsDenied"
           );
 
           document
-            .getElementById(c + 'AllDenied')
-            .setAttribute('aria-pressed', 'false');
+            .getElementById(c + "AllDenied")
+            .setAttribute("aria-pressed", "false");
           document
-            .getElementById(c + 'AllAllowed')
-            .setAttribute('aria-pressed', 'false');
+            .getElementById(c + "AllAllowed")
+            .setAttribute("aria-pressed", "false");
         }
 
         // close the alert if all service have been reviewed
@@ -2233,8 +2233,8 @@ var redacto = {
         }
 
         if (status === true) {
-          if (document.getElementById('tacCL' + key) !== null) {
-            document.getElementById('tacCL' + key).innerHTML = '...';
+          if (document.getElementById("tacCL" + key) !== null) {
+            document.getElementById("tacCL" + key).innerHTML = "...";
           }
           setTimeout(function () {
             redacto.cookie.checkCount(key);
@@ -2248,98 +2248,98 @@ var redacto = {
       var cats = document.querySelectorAll('[id^="redactoServicesTitle_"]');
       Array.prototype.forEach.call(cats, function (item) {
         var cat = item
-            .getAttribute('id')
-            .replace(/^(redactoServicesTitle_)/, ''),
+            .getAttribute("id")
+            .replace(/^(redactoServicesTitle_)/, ""),
           total = document.getElementById(
-            'redactoServices_' + cat
+            "redactoServices_" + cat
           ).childElementCount;
-        var doc = document.getElementById('redactoServices_' + cat),
+        var doc = document.getElementById("redactoServices_" + cat),
           groupdenied = 0,
           groupallowed = 0;
         for (var ii = 0; ii < doc.children.length; ii++) {
-          if (doc.children[ii].className == 'redactoLine redactoIsDenied') {
+          if (doc.children[ii].className == "redactoLine redactoIsDenied") {
             groupdenied++;
           }
-          if (doc.children[ii].className == 'redactoLine redactoIsAllowed') {
+          if (doc.children[ii].className == "redactoLine redactoIsAllowed") {
             groupallowed++;
           }
         }
         if (total === groupallowed) {
           redacto.userInterface.removeClass(
-            'redacto-group-' + cat,
-            'redactoIsDenied'
+            "redacto-group-" + cat,
+            "redactoIsDenied"
           );
           redacto.userInterface.addClass(
-            'redacto-group-' + cat,
-            'redactoIsAllowed'
+            "redacto-group-" + cat,
+            "redactoIsAllowed"
           );
 
-          if (document.getElementById('redacto-reject-group-' + cat)) {
+          if (document.getElementById("redacto-reject-group-" + cat)) {
             document
-              .getElementById('redacto-reject-group-' + cat)
-              .setAttribute('aria-pressed', 'false');
+              .getElementById("redacto-reject-group-" + cat)
+              .setAttribute("aria-pressed", "false");
             document
-              .getElementById('redacto-accept-group-' + cat)
-              .setAttribute('aria-pressed', 'true');
+              .getElementById("redacto-accept-group-" + cat)
+              .setAttribute("aria-pressed", "true");
           }
         }
         if (total === groupdenied) {
           redacto.userInterface.addClass(
-            'redacto-group-' + cat,
-            'redactoIsDenied'
+            "redacto-group-" + cat,
+            "redactoIsDenied"
           );
           redacto.userInterface.removeClass(
-            'redacto-group-' + cat,
-            'redactoIsAllowed'
+            "redacto-group-" + cat,
+            "redactoIsAllowed"
           );
 
-          if (document.getElementById('redacto-reject-group-' + cat)) {
+          if (document.getElementById("redacto-reject-group-" + cat)) {
             document
-              .getElementById('redacto-reject-group-' + cat)
-              .setAttribute('aria-pressed', 'true');
+              .getElementById("redacto-reject-group-" + cat)
+              .setAttribute("aria-pressed", "true");
             document
-              .getElementById('redacto-accept-group-' + cat)
-              .setAttribute('aria-pressed', 'false');
+              .getElementById("redacto-accept-group-" + cat)
+              .setAttribute("aria-pressed", "false");
           }
         }
         if (total !== groupdenied && total !== groupallowed) {
           redacto.userInterface.removeClass(
-            'redacto-group-' + cat,
-            'redactoIsDenied'
+            "redacto-group-" + cat,
+            "redactoIsDenied"
           );
           redacto.userInterface.removeClass(
-            'redacto-group-' + cat,
-            'redactoIsAllowed'
+            "redacto-group-" + cat,
+            "redactoIsAllowed"
           );
 
-          if (document.getElementById('redacto-reject-group-' + cat)) {
+          if (document.getElementById("redacto-reject-group-" + cat)) {
             document
-              .getElementById('redacto-reject-group-' + cat)
-              .setAttribute('aria-pressed', 'false');
+              .getElementById("redacto-reject-group-" + cat)
+              .setAttribute("aria-pressed", "false");
             document
-              .getElementById('redacto-accept-group-' + cat)
-              .setAttribute('aria-pressed', 'false');
+              .getElementById("redacto-accept-group-" + cat)
+              .setAttribute("aria-pressed", "false");
           }
         }
         groupdenied = 0;
         groupallowed = 0;
 
-        if (document.getElementById('redactoCounter-' + cat)) {
-          document.getElementById('redactoCounter-' + cat).innerHTML =
-            '(' +
-            document.getElementById('redactoServices_' + cat)
+        if (document.getElementById("redactoCounter-" + cat)) {
+          document.getElementById("redactoCounter-" + cat).innerHTML =
+            "(" +
+            document.getElementById("redactoServices_" + cat)
               .childElementCount +
-            ')';
+            ")";
         }
       });
 
       setTimeout(function () {
-        if (document.getElementById('redactoCounter-all')) {
-          document.getElementById('redactoCounter-all').innerHTML =
-            '(' + redacto.job.length + ')';
+        if (document.getElementById("redactoCounter-all")) {
+          document.getElementById("redactoCounter-all").innerHTML =
+            "(" + redacto.job.length + ")";
         }
-        if (document.getElementById('redactoCounter-list')) {
-          var liPartners = '';
+        if (document.getElementById("redactoCounter-list")) {
+          var liPartners = "";
           var redactoPartnersCat = [];
           var titles = [];
 
@@ -2351,101 +2351,103 @@ var redacto = {
           });
           titles.sort();
           titles.forEach(function (title) {
-            liPartners += '<li>' + title + '</li>';
+            liPartners += "<li>" + title + "</li>";
           });
 
-          document.getElementById('redactoCounter-list').innerHTML = liPartners;
+          document.getElementById("redactoCounter-list").innerHTML = liPartners;
         }
       }, 120);
     },
     openPanel: function () {
-      'use strict';
+      "use strict";
 
-      redacto.userInterface.css('redacto', 'display', 'block');
-      redacto.userInterface.css('redactoBack', 'display', 'block');
+      redacto.userInterface.css("redacto", "display", "block");
+      redacto.userInterface.css("redactoBack", "display", "block");
       redacto.userInterface.css(
-        'redactoCookiesListContainer',
-        'display',
-        'none'
+        "redactoCookiesListContainer",
+        "display",
+        "none"
       );
 
-      document.getElementById('redactoClosePanel').focus();
-      if (document.getElementsByTagName('html')[0].classList !== undefined) {
-        document
-          .getElementsByTagName('html')[0]
-          .classList.add('redacto-modal-open-noscroll');
+      if (redacto.checkIfExist("redactoClosePanel")) {
+        document.getElementById("redactoClosePanel").focus();
       }
-      if (document.getElementsByTagName('body')[0].classList !== undefined) {
+      if (document.getElementsByTagName("html")[0].classList !== undefined) {
         document
-          .getElementsByTagName('body')[0]
-          .classList.add('redacto-modal-open');
+          .getElementsByTagName("html")[0]
+          .classList.add("redacto-modal-open-noscroll");
       }
-      redacto.userInterface.focusTrap('redacto');
-      redacto.userInterface.jsSizing('main');
+      if (document.getElementsByTagName("body")[0].classList !== undefined) {
+        document
+          .getElementsByTagName("body")[0]
+          .classList.add("redacto-modal-open");
+      }
+      redacto.userInterface.focusTrap("redacto");
+      redacto.userInterface.jsSizing("main");
 
       //ie compatibility
       var tacOpenPanelEvent;
-      if (typeof Event === 'function') {
-        tacOpenPanelEvent = new Event('tac.open_panel');
-      } else if (typeof document.createEvent === 'function') {
-        tacOpenPanelEvent = document.createEvent('Event');
-        tacOpenPanelEvent.initEvent('tac.open_panel', true, true);
+      if (typeof Event === "function") {
+        tacOpenPanelEvent = new Event("tac.open_panel");
+      } else if (typeof document.createEvent === "function") {
+        tacOpenPanelEvent = document.createEvent("Event");
+        tacOpenPanelEvent.initEvent("tac.open_panel", true, true);
       }
       //end ie compatibility
 
-      if (typeof window.dispatchEvent === 'function') {
+      if (typeof window.dispatchEvent === "function") {
         window.dispatchEvent(tacOpenPanelEvent);
       }
     },
     closePanel: function () {
-      'use strict';
+      "use strict";
 
       if (document.location.hash === redacto.hashtag) {
         if (window.history) {
           window.history.replaceState(
-            '',
+            "",
             document.title,
             window.location.pathname + window.location.search
           );
         } else {
-          document.location.hash = '';
+          document.location.hash = "";
         }
       }
-      if (redacto.checkIfExist('redacto')) {
+      if (redacto.checkIfExist("redacto")) {
         // accessibility: manage focus on close panel
-        if (redacto.checkIfExist('redactoCloseAlert')) {
-          document.getElementById('redactoCloseAlert').focus();
-        } else if (redacto.checkIfExist('redactoManager')) {
-          document.getElementById('redactoManager').focus();
+        if (redacto.checkIfExist("redactoCloseAlert")) {
+          document.getElementById("redactoCloseAlert").focus();
+        } else if (redacto.checkIfExist("redactoManager")) {
+          document.getElementById("redactoManager").focus();
         } else if (
           redacto.customCloserId &&
           redacto.checkIfExist(redacto.customCloserId)
         ) {
           document.getElementById(redacto.customCloserId).focus();
         }
-        redacto.userInterface.css('redacto', 'display', 'none');
+        redacto.userInterface.css("redacto", "display", "none");
       }
 
       if (
-        redacto.checkIfExist('redactoCookiesListContainer') &&
-        redacto.checkIfExist('redactoCookiesNumber')
+        redacto.checkIfExist("redactoCookiesListContainer") &&
+        redacto.checkIfExist("redactoCookiesNumber")
       ) {
         // accessibility: manage focus on close cookies list
-        document.getElementById('redactoCookiesNumber').focus();
+        document.getElementById("redactoCookiesNumber").focus();
         document
-          .getElementById('redactoCookiesNumber')
-          .setAttribute('aria-expanded', 'false');
+          .getElementById("redactoCookiesNumber")
+          .setAttribute("aria-expanded", "false");
         redacto.userInterface.css(
-          'redactoCookiesListContainer',
-          'display',
-          'none'
+          "redactoCookiesListContainer",
+          "display",
+          "none"
         );
       }
 
       redacto.fallback(
-        ['redactoInfoBox'],
+        ["redactoInfoBox"],
         function (elem) {
-          elem.style.display = 'none';
+          elem.style.display = "none";
         },
         true
       );
@@ -2453,49 +2455,49 @@ var redacto = {
       if (redacto.reloadThePage === true) {
         window.location.reload();
       } else {
-        redacto.userInterface.css('redactoBack', 'display', 'none');
+        redacto.userInterface.css("redactoBack", "display", "none");
       }
 
       if (
         !(
-          redacto.parameters.orientation === 'middle' &&
-          document.getElementById('redactoAlertBig').style.display === 'block'
+          redacto.parameters.orientation === "middle" &&
+          document.getElementById("redactoAlertBig").style.display === "block"
         )
       ) {
-        if (document.getElementsByTagName('html')[0].classList !== undefined) {
+        if (document.getElementsByTagName("html")[0].classList !== undefined) {
           document
-            .getElementsByTagName('html')[0]
-            .classList.remove('redacto-modal-open-noscroll');
+            .getElementsByTagName("html")[0]
+            .classList.remove("redacto-modal-open-noscroll");
         }
       }
-      if (document.getElementsByTagName('body')[0].classList !== undefined) {
+      if (document.getElementsByTagName("body")[0].classList !== undefined) {
         document
-          .getElementsByTagName('body')[0]
-          .classList.remove('redacto-modal-open');
+          .getElementsByTagName("body")[0]
+          .classList.remove("redacto-modal-open");
       }
 
       //ie compatibility
       var tacClosePanelEvent;
-      if (typeof Event === 'function') {
-        tacClosePanelEvent = new Event('tac.close_panel');
-      } else if (typeof document.createEvent === 'function') {
-        tacClosePanelEvent = document.createEvent('Event');
-        tacClosePanelEvent.initEvent('tac.close_panel', true, true);
+      if (typeof Event === "function") {
+        tacClosePanelEvent = new Event("tac.close_panel");
+      } else if (typeof document.createEvent === "function") {
+        tacClosePanelEvent = document.createEvent("Event");
+        tacClosePanelEvent.initEvent("tac.close_panel", true, true);
       }
       //end ie compatibility
 
-      if (typeof window.dispatchEvent === 'function') {
+      if (typeof window.dispatchEvent === "function") {
         window.dispatchEvent(tacClosePanelEvent);
       }
     },
     focusTrap: function (parentElement) {
-      'use strict';
+      "use strict";
 
       var focusableEls, firstFocusableEl, lastFocusableEl, filtered;
 
       focusableEls = document
         .getElementById(parentElement)
-        .querySelectorAll('a[href], button');
+        .querySelectorAll("a[href], button");
       filtered = [];
 
       // get only visible items
@@ -2511,8 +2513,8 @@ var redacto = {
       //loop focus inside redacto
       document
         .getElementById(parentElement)
-        .addEventListener('keydown', function (evt) {
-          if (evt.key === 'Tab' || evt.keyCode === 9) {
+        .addEventListener("keydown", function (evt) {
+          if (evt.key === "Tab" || evt.keyCode === 9) {
             if (evt.shiftKey) {
               /* shift + tab */ if (
                 document.activeElement === firstFocusableEl
@@ -2530,58 +2532,58 @@ var redacto = {
         });
     },
     openAlert: function () {
-      'use strict';
-      var c = 'redacto';
-      redacto.userInterface.css(c + 'Percentage', 'display', 'block');
-      redacto.userInterface.css(c + 'AlertSmall', 'display', 'none');
-      redacto.userInterface.css(c + 'Icon', 'display', 'none');
-      redacto.userInterface.css(c + 'AlertBig', 'display', 'block');
-      redacto.userInterface.addClass(c + 'Root', 'redactoBeforeVisible');
-      redacto.userInterface.css('tac_title', 'display', 'block');
+      "use strict";
+      var c = "redacto";
+      redacto.userInterface.css(c + "Percentage", "display", "block");
+      redacto.userInterface.css(c + "AlertSmall", "display", "none");
+      redacto.userInterface.css(c + "Icon", "display", "none");
+      redacto.userInterface.css(c + "AlertBig", "display", "block");
+      redacto.userInterface.addClass(c + "Root", "redactoBeforeVisible");
+      redacto.userInterface.css("tac_title", "display", "block");
 
       //ie compatibility
       var tacOpenAlertEvent;
-      if (typeof Event === 'function') {
-        tacOpenAlertEvent = new Event('tac.open_alert');
-      } else if (typeof document.createEvent === 'function') {
-        tacOpenAlertEvent = document.createEvent('Event');
-        tacOpenAlertEvent.initEvent('tac.open_alert', true, true);
+      if (typeof Event === "function") {
+        tacOpenAlertEvent = new Event("tac.open_alert");
+      } else if (typeof document.createEvent === "function") {
+        tacOpenAlertEvent = document.createEvent("Event");
+        tacOpenAlertEvent.initEvent("tac.open_alert", true, true);
       }
       //end ie compatibility
 
       if (
-        document.getElementById('redactoAlertBig') !== null &&
-        redacto.parameters.orientation === 'middle'
+        document.getElementById("redactoAlertBig") !== null &&
+        redacto.parameters.orientation === "middle"
       ) {
-        document.getElementById('redactoAlertBig').focus();
-        if (document.getElementsByTagName('html')[0].classList !== undefined) {
+        document.getElementById("redactoAlertBig").focus();
+        if (document.getElementsByTagName("html")[0].classList !== undefined) {
           document
-            .getElementsByTagName('html')[0]
-            .classList.add('redacto-modal-open-noscroll');
+            .getElementsByTagName("html")[0]
+            .classList.add("redacto-modal-open-noscroll");
         }
       }
 
-      if (typeof window.dispatchEvent === 'function') {
+      if (typeof window.dispatchEvent === "function") {
         window.dispatchEvent(tacOpenAlertEvent);
       }
     },
     closeAlert: function () {
-      'use strict';
-      var c = 'redacto';
-      redacto.userInterface.css(c + 'Percentage', 'display', 'none');
-      redacto.userInterface.css(c + 'AlertSmall', 'display', 'block');
-      redacto.userInterface.css(c + 'Icon', 'display', 'block');
-      redacto.userInterface.css(c + 'AlertBig', 'display', 'none');
-      redacto.userInterface.removeClass(c + 'Root', 'redactoBeforeVisible');
-      redacto.userInterface.jsSizing('box');
+      "use strict";
+      var c = "redacto";
+      redacto.userInterface.css(c + "Percentage", "display", "none");
+      redacto.userInterface.css(c + "AlertSmall", "display", "block");
+      redacto.userInterface.css(c + "Icon", "display", "block");
+      redacto.userInterface.css(c + "AlertBig", "display", "none");
+      redacto.userInterface.removeClass(c + "Root", "redactoBeforeVisible");
+      redacto.userInterface.jsSizing("box");
 
       //ie compatibility
       var tacCloseAlertEvent;
-      if (typeof Event === 'function') {
-        tacCloseAlertEvent = new Event('tac.close_alert');
-      } else if (typeof document.createEvent === 'function') {
-        tacCloseAlertEvent = document.createEvent('Event');
-        tacCloseAlertEvent.initEvent('tac.close_alert', true, true);
+      if (typeof Event === "function") {
+        tacCloseAlertEvent = new Event("tac.close_alert");
+      } else if (typeof document.createEvent === "function") {
+        tacCloseAlertEvent = document.createEvent("Event");
+        tacCloseAlertEvent.initEvent("tac.close_alert", true, true);
       }
       //end ie compatibility
 
@@ -2589,51 +2591,51 @@ var redacto = {
         redacto.parameters.showAlertSmall === false &&
         redacto.parameters.showIcon === false
       ) {
-        redacto.userInterface.css('tac_title', 'display', 'none');
+        redacto.userInterface.css("tac_title", "display", "none");
       }
 
-      if (document.getElementsByTagName('html')[0].classList !== undefined) {
+      if (document.getElementsByTagName("html")[0].classList !== undefined) {
         document
-          .getElementsByTagName('html')[0]
-          .classList.remove('redacto-modal-open-noscroll');
+          .getElementsByTagName("html")[0]
+          .classList.remove("redacto-modal-open-noscroll");
       }
 
-      if (typeof window.dispatchEvent === 'function') {
+      if (typeof window.dispatchEvent === "function") {
         window.dispatchEvent(tacCloseAlertEvent);
       }
     },
     toggleCookiesList: function () {
-      'use strict';
-      var div = document.getElementById('redactoCookiesListContainer'),
-        togglediv = document.getElementById('redactoCookiesNumber');
+      "use strict";
+      var div = document.getElementById("redactoCookiesListContainer"),
+        togglediv = document.getElementById("redactoCookiesNumber");
 
       if (div === null) {
         return;
       }
 
-      if (div.style.display !== 'block') {
+      if (div.style.display !== "block") {
         redacto.cookie.number();
-        div.style.display = 'block';
-        togglediv.setAttribute('aria-expanded', 'true');
-        redacto.userInterface.jsSizing('cookie');
-        redacto.userInterface.css('redacto', 'display', 'none');
-        redacto.userInterface.css('redactoBack', 'display', 'block');
+        div.style.display = "block";
+        togglediv.setAttribute("aria-expanded", "true");
+        redacto.userInterface.jsSizing("cookie");
+        redacto.userInterface.css("redacto", "display", "none");
+        redacto.userInterface.css("redactoBack", "display", "block");
         redacto.fallback(
-          ['redactoInfoBox'],
+          ["redactoInfoBox"],
           function (elem) {
-            elem.style.display = 'none';
+            elem.style.display = "none";
           },
           true
         );
       } else {
-        div.style.display = 'none';
-        togglediv.setAttribute('aria-expanded', 'false');
-        redacto.userInterface.css('redacto', 'display', 'none');
-        redacto.userInterface.css('redactoBack', 'display', 'none');
+        div.style.display = "none";
+        togglediv.setAttribute("aria-expanded", "false");
+        redacto.userInterface.css("redacto", "display", "none");
+        redacto.userInterface.css("redactoBack", "display", "none");
       }
     },
     toggle: function (id, closeClass) {
-      'use strict';
+      "use strict";
       var div = document.getElementById(id);
 
       if (div === null) {
@@ -2645,22 +2647,22 @@ var redacto = {
           [closeClass],
           function (elem) {
             if (elem.id !== id) {
-              elem.style.display = 'none';
+              elem.style.display = "none";
             }
           },
           true
         );
       }
 
-      if (div.style.display !== 'block') {
-        div.style.display = 'block';
+      if (div.style.display !== "block") {
+        div.style.display = "block";
       } else {
-        div.style.display = 'none';
+        div.style.display = "none";
       }
     },
     order: function (id) {
-      'use strict';
-      var main = document.getElementById('redactoServices_' + id),
+      "use strict";
+      var main = document.getElementById("redactoServices_" + id),
         allDivs,
         store = [],
         i;
@@ -2672,8 +2674,8 @@ var redacto = {
       allDivs = main.childNodes;
 
       if (
-        typeof Array.prototype.map === 'function' &&
-        typeof Enumerable === 'undefined'
+        typeof Array.prototype.map === "function" &&
+        typeof Enumerable === "undefined"
       ) {
         Array.prototype.map
           .call(main.children, Object)
@@ -2681,14 +2683,14 @@ var redacto = {
             //var mainChildren = Array.from(main.children);
             //mainChildren.sort(function (a, b) {
             if (
-              redacto.services[a.id.replace(/Line/g, '')].name >
-              redacto.services[b.id.replace(/Line/g, '')].name
+              redacto.services[a.id.replace(/Line/g, "")].name >
+              redacto.services[b.id.replace(/Line/g, "")].name
             ) {
               return 1;
             }
             if (
-              redacto.services[a.id.replace(/Line/g, '')].name <
-              redacto.services[b.id.replace(/Line/g, '')].name
+              redacto.services[a.id.replace(/Line/g, "")].name <
+              redacto.services[b.id.replace(/Line/g, "")].name
             ) {
               return -1;
             }
@@ -2700,13 +2702,13 @@ var redacto = {
       }
     },
     jsSizing: function (type) {
-      'use strict';
+      "use strict";
       var scrollbarMarginRight = 10,
         scrollbarWidthParent,
         scrollbarWidthChild,
         servicesHeight,
         e = window,
-        a = 'inner',
+        a = "inner",
         windowInnerHeight =
           window.innerHeight ||
           document.documentElement.clientHeight ||
@@ -2722,104 +2724,104 @@ var redacto = {
         alertSmallHeight,
         cookiesNumberHeight;
 
-      if (type === 'box') {
+      if (type === "box") {
         if (
-          document.getElementById('redactoAlertSmall') !== null &&
-          document.getElementById('redactoCookiesNumber') !== null
+          document.getElementById("redactoAlertSmall") !== null &&
+          document.getElementById("redactoCookiesNumber") !== null
         ) {
           // reset
           redacto.userInterface.css(
-            'redactoCookiesNumber',
-            'padding',
-            '0px 10px'
+            "redactoCookiesNumber",
+            "padding",
+            "0px 10px"
           );
 
           // calculate
           alertSmallHeight =
-            document.getElementById('redactoAlertSmall').offsetHeight;
+            document.getElementById("redactoAlertSmall").offsetHeight;
           cookiesNumberHeight = document.getElementById(
-            'redactoCookiesNumber'
+            "redactoCookiesNumber"
           ).offsetHeight;
           paddingBox = (alertSmallHeight - cookiesNumberHeight) / 2;
 
           // apply
           redacto.userInterface.css(
-            'redactoCookiesNumber',
-            'padding',
-            paddingBox + 'px 10px'
+            "redactoCookiesNumber",
+            "padding",
+            paddingBox + "px 10px"
           );
         }
-      } else if (type === 'main') {
+      } else if (type === "main") {
         // get the real window width for media query
         if (window.innerWidth === undefined) {
-          a = 'client';
+          a = "client";
           e = document.documentElement || document.body;
         }
 
         // height of the services list container
         if (
-          document.getElementById('redacto') !== null &&
-          document.getElementById('redactoClosePanel') !== null &&
-          document.getElementById('redactoMainLineOffset') !== null
+          document.getElementById("redacto") !== null &&
+          document.getElementById("redactoClosePanel") !== null &&
+          document.getElementById("redactoMainLineOffset") !== null
         ) {
           // reset
-          redacto.userInterface.css('redactoServices', 'height', 'auto');
+          redacto.userInterface.css("redactoServices", "height", "auto");
 
           // calculate
-          mainHeight = document.getElementById('redacto').offsetHeight;
+          mainHeight = document.getElementById("redacto").offsetHeight;
           closeButtonHeight =
-            document.getElementById('redactoClosePanel').offsetHeight;
+            document.getElementById("redactoClosePanel").offsetHeight;
 
           // apply
           servicesHeight = mainHeight - closeButtonHeight + 4;
           redacto.userInterface.css(
-            'redactoServices',
-            'height',
-            servicesHeight + 'px'
+            "redactoServices",
+            "height",
+            servicesHeight + "px"
           );
-          redacto.userInterface.css('redactoServices', 'overflow-x', 'auto');
+          redacto.userInterface.css("redactoServices", "overflow-x", "auto");
         }
 
         // align the main allow/deny button depending on scrollbar width
         if (
-          document.getElementById('redactoServices') !== null &&
-          document.getElementById('redactoScrollbarChild') !== null
+          document.getElementById("redactoServices") !== null &&
+          document.getElementById("redactoScrollbarChild") !== null
         ) {
           // media query
-          if (e[a + 'Width'] <= 479) {
+          if (e[a + "Width"] <= 479) {
             //redacto.userInterface.css('redactoScrollbarAdjust', 'marginLeft', '11px');
-          } else if (e[a + 'Width'] <= 767) {
+          } else if (e[a + "Width"] <= 767) {
             scrollbarMarginRight = 12;
           }
 
           scrollbarWidthParent =
-            document.getElementById('redactoServices').offsetWidth;
+            document.getElementById("redactoServices").offsetWidth;
           scrollbarWidthChild = document.getElementById(
-            'redactoScrollbarChild'
+            "redactoScrollbarChild"
           ).offsetWidth;
           //redacto.userInterface.css('redactoScrollbarAdjust', 'marginRight', ((scrollbarWidthParent - scrollbarWidthChild) + scrollbarMarginRight) + 'px');
         }
 
         // center the main panel
-        if (document.getElementById('redacto') !== null) {
+        if (document.getElementById("redacto") !== null) {
           // media query
-          if (e[a + 'Width'] <= 767) {
+          if (e[a + "Width"] <= 767) {
             mainTop = 0;
           } else {
             mainTop =
               (windowInnerHeight -
-                document.getElementById('redacto').offsetHeight) /
+                document.getElementById("redacto").offsetHeight) /
                 2 -
               21;
           }
 
-          if (document.getElementById('redactoMainLineOffset') !== null) {
+          if (document.getElementById("redactoMainLineOffset") !== null) {
             if (
-              document.getElementById('redacto').offsetHeight <
+              document.getElementById("redacto").offsetHeight <
               windowInnerHeight / 2
             ) {
               mainTop -= document.getElementById(
-                'redactoMainLineOffset'
+                "redactoMainLineOffset"
               ).offsetHeight;
             }
           }
@@ -2830,43 +2832,43 @@ var redacto = {
           }
 
           // apply
-          redacto.userInterface.css('redacto', 'top', mainTop + 'px');
+          redacto.userInterface.css("redacto", "top", mainTop + "px");
         }
-      } else if (type === 'cookie') {
+      } else if (type === "cookie") {
         // put cookies list at bottom
-        if (document.getElementById('redactoAlertSmall') !== null) {
+        if (document.getElementById("redactoAlertSmall") !== null) {
           redacto.userInterface.css(
-            'redactoCookiesListContainer',
-            'bottom',
-            document.getElementById('redactoAlertSmall').offsetHeight + 'px'
+            "redactoCookiesListContainer",
+            "bottom",
+            document.getElementById("redactoAlertSmall").offsetHeight + "px"
           );
         }
 
         // height of cookies list
-        if (document.getElementById('redactoCookiesListContainer') !== null) {
+        if (document.getElementById("redactoCookiesListContainer") !== null) {
           // reset
-          redacto.userInterface.css('redactoCookiesList', 'height', 'auto');
+          redacto.userInterface.css("redactoCookiesList", "height", "auto");
 
           // calculate
           cookiesListHeight = document.getElementById(
-            'redactoCookiesListContainer'
+            "redactoCookiesListContainer"
           ).offsetHeight;
           cookiesCloseHeight = document.getElementById(
-            'redactoClosePanelCookie'
+            "redactoClosePanelCookie"
           ).offsetHeight;
           cookiesTitleHeight = document.getElementById(
-            'redactoCookiesTitle'
+            "redactoCookiesTitle"
           ).offsetHeight;
 
           // apply
           redacto.userInterface.css(
-            'redactoCookiesList',
-            'height',
+            "redactoCookiesList",
+            "height",
             cookiesListHeight -
               cookiesCloseHeight -
               cookiesTitleHeight -
               2 +
-              'px'
+              "px"
           );
         }
       }
@@ -2875,9 +2877,9 @@ var redacto = {
   cookie: {
     owner: {},
     create: function (key, status) {
-      'use strict';
+      "use strict";
 
-      if (redactoForceExpire !== '') {
+      if (redactoForceExpire !== "") {
         // The number of day(s)/hour(s) can't be higher than 1 year
         if (
           (redactoExpireInDay && redactoForceExpire < 365) ||
@@ -2896,96 +2898,96 @@ var redacto = {
       var d = new Date(),
         time = d.getTime(),
         expireTime = time + timeExpire, // 365 days
-        regex = new RegExp('!' + key + '=(wait|true|false)', 'g'),
-        cookie = redacto.cookie.read().replace(regex, ''),
+        regex = new RegExp("!" + key + "=(wait|true|false)", "g"),
+        cookie = redacto.cookie.read().replace(regex, ""),
         value =
           redacto.parameters.cookieName +
-          '=' +
+          "=" +
           cookie +
-          '!' +
+          "!" +
           key +
-          '=' +
+          "=" +
           status,
         domain =
           redacto.parameters.cookieDomain !== undefined &&
-          redacto.parameters.cookieDomain !== ''
-            ? '; domain=' + redacto.parameters.cookieDomain
-            : '',
-        secure = location.protocol === 'https:' ? '; Secure' : '';
+          redacto.parameters.cookieDomain !== ""
+            ? "; domain=" + redacto.parameters.cookieDomain
+            : "",
+        secure = location.protocol === "https:" ? "; Secure" : "";
 
       d.setTime(expireTime);
       document.cookie =
         value +
-        '; expires=' +
+        "; expires=" +
         d.toGMTString() +
-        '; path=/' +
+        "; path=/" +
         domain +
         secure +
-        '; samesite=lax';
+        "; samesite=lax";
 
-      redacto.sendEvent('tac.consent_updated');
+      redacto.sendEvent("tac.consent_updated");
     },
     read: function () {
-      'use strict';
-      var nameEQ = redacto.parameters.cookieName + '=',
-        ca = document.cookie.split(';'),
+      "use strict";
+      var nameEQ = redacto.parameters.cookieName + "=",
+        ca = document.cookie.split(";"),
         i,
         c;
 
       for (i = 0; i < ca.length; i += 1) {
         c = ca[i];
-        while (c.charAt(0) === ' ') {
+        while (c.charAt(0) === " ") {
           c = c.substring(1, c.length);
         }
         if (c.indexOf(nameEQ) === 0) {
           return c.substring(nameEQ.length, c.length);
         }
       }
-      return '';
+      return "";
     },
     purge: function (arr) {
-      'use strict';
+      "use strict";
       var i;
 
       for (i = 0; i < arr.length; i += 1) {
         var rgxpCookie = new RegExp(
-          '^(.*;)?\\s*' + arr[i] + '\\s*=\\s*[^;]+(.*)?$'
+          "^(.*;)?\\s*" + arr[i] + "\\s*=\\s*[^;]+(.*)?$"
         );
         if (document.cookie.match(rgxpCookie)) {
           document.cookie =
-            arr[i] + '=; expires=Thu, 01 Jan 2000 00:00:00 GMT; path=/;';
+            arr[i] + "=; expires=Thu, 01 Jan 2000 00:00:00 GMT; path=/;";
           document.cookie =
             arr[i] +
-            '=; expires=Thu, 01 Jan 2000 00:00:00 GMT; path=/; domain=.' +
+            "=; expires=Thu, 01 Jan 2000 00:00:00 GMT; path=/; domain=." +
             location.hostname +
-            ';';
+            ";";
           document.cookie =
             arr[i] +
-            '=; expires=Thu, 01 Jan 2000 00:00:00 GMT; path=/; domain=.' +
-            location.hostname.split('.').slice(-2).join('.') +
-            ';';
+            "=; expires=Thu, 01 Jan 2000 00:00:00 GMT; path=/; domain=." +
+            location.hostname.split(".").slice(-2).join(".") +
+            ";";
         }
       }
     },
     checkCount: function (key) {
-      'use strict';
+      "use strict";
       var arr = redacto.services[key].cookies,
         nb = arr.length,
         nbCurrent = 0,
-        html = '',
+        html = "",
         i,
-        status = document.cookie.indexOf(key + '=true'),
-        cookieLabel = 'cookie';
+        status = document.cookie.indexOf(key + "=true"),
+        cookieLabel = "cookie";
 
-      if (redacto.getLanguage() === 'de') {
-        cookieLabel = 'Cookie';
+      if (redacto.getLanguage() === "de") {
+        cookieLabel = "Cookie";
       }
 
       if (status >= 0 && nb === 0) {
         html += redacto.lang.useNoCookie;
       } else if (nb > 0) {
         for (i = 0; i < nb; i += 1) {
-          if (document.cookie.indexOf(arr[i] + '=') !== -1) {
+          if (document.cookie.indexOf(arr[i] + "=") !== -1) {
             nbCurrent += 1;
             if (redacto.cookie.owner[arr[i]] === undefined) {
               redacto.cookie.owner[arr[i]] = [];
@@ -3003,30 +3005,30 @@ var redacto = {
 
         if (nbCurrent > 0) {
           html +=
-            redacto.lang.useCookieCurrent + ' ' + nbCurrent + ' ' + cookieLabel;
+            redacto.lang.useCookieCurrent + " " + nbCurrent + " " + cookieLabel;
           if (nbCurrent > 1) {
-            html += 's';
+            html += "s";
           }
-          html += '.';
+          html += ".";
         } else {
           html += redacto.lang.useNoCookie;
         }
       } else if (nb === 0) {
         html = redacto.lang.noCookie;
       } else {
-        html += redacto.lang.useCookie + ' ' + nb + ' ' + cookieLabel;
+        html += redacto.lang.useCookie + " " + nb + " " + cookieLabel;
         if (nb > 1) {
-          html += 's';
+          html += "s";
         }
-        html += '.';
+        html += ".";
       }
 
-      if (document.getElementById('tacCL' + key) !== null) {
-        document.getElementById('tacCL' + key).innerHTML = html;
+      if (document.getElementById("tacCL" + key) !== null) {
+        document.getElementById("tacCL" + key).innerHTML = html;
       }
     },
     crossIndexOf: function (arr, match) {
-      'use strict';
+      "use strict";
       var i;
       for (i = 0; i < arr.length; i += 1) {
         if (arr[i] === match) {
@@ -3036,17 +3038,17 @@ var redacto = {
       return false;
     },
     number: function () {
-      'use strict';
-      var cookies = document.cookie.split(';'),
-        nb = document.cookie !== '' ? cookies.length : 0,
-        html = '',
+      "use strict";
+      var cookies = document.cookie.split(";"),
+        nb = document.cookie !== "" ? cookies.length : 0,
+        html = "",
         i,
         name,
         namea,
         nameb,
         c,
         d,
-        s = nb > 1 ? 's' : '',
+        s = nb > 1 ? "s" : "",
         savedname,
         regex = /^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i,
         regexedDomain =
@@ -3056,16 +3058,16 @@ var redacto = {
         host = redacto.domain !== undefined ? redacto.domain : regexedDomain;
 
       cookies = cookies.sort(function (a, b) {
-        namea = a.split('=', 1).toString().replace(/ /g, '');
-        nameb = b.split('=', 1).toString().replace(/ /g, '');
+        namea = a.split("=", 1).toString().replace(/ /g, "");
+        nameb = b.split("=", 1).toString().replace(/ /g, "");
         c =
           redacto.cookie.owner[namea] !== undefined
             ? redacto.cookie.owner[namea]
-            : '0';
+            : "0";
         d =
           redacto.cookie.owner[nameb] !== undefined
             ? redacto.cookie.owner[nameb]
-            : '0';
+            : "0";
         if (c + a > d + b) {
           return 1;
         }
@@ -3075,19 +3077,19 @@ var redacto = {
         return 0;
       });
 
-      if (document.cookie !== '') {
+      if (document.cookie !== "") {
         for (i = 0; i < nb; i += 1) {
-          name = cookies[i].split('=', 1).toString().replace(/ /g, '');
+          name = cookies[i].split("=", 1).toString().replace(/ /g, "");
           if (
             redacto.cookie.owner[name] !== undefined &&
-            redacto.cookie.owner[name].join(' // ') !== savedname
+            redacto.cookie.owner[name].join(" // ") !== savedname
           ) {
-            savedname = redacto.cookie.owner[name].join(' // ');
+            savedname = redacto.cookie.owner[name].join(" // ");
             html += '<div class="redactoHidden">';
             html +=
               '     <span class="redactoH3" role="heading" aria-level="4">';
-            html += '        ' + redacto.cookie.owner[name].join(' // ');
-            html += '    </span>';
+            html += "        " + redacto.cookie.owner[name].join(" // ");
+            html += "    </span>";
             html += '</div><ul class="cookie-list">';
           } else if (
             redacto.cookie.owner[name] === undefined &&
@@ -3097,66 +3099,66 @@ var redacto = {
             html += '<div class="redactoHidden">';
             html +=
               '     <span class="redactoH3" role="heading" aria-level="4">';
-            html += '        ' + host;
-            html += '    </span>';
+            html += "        " + host;
+            html += "    </span>";
             html += '</div><ul class="cookie-list">';
           }
           html += '<li class="redactoCookiesListMain">';
           html +=
             '    <div class="redactoCookiesListLeft"><button type="button" class="purgeBtn" data-cookie="' +
-            redacto.fixSelfXSS(cookies[i].split('=', 1)) +
+            redacto.fixSelfXSS(cookies[i].split("=", 1)) +
             '"><strong>&times;</strong></button> <strong>' +
             redacto.fixSelfXSS(name) +
-            '</strong>';
-          html += '    </div>';
+            "</strong>";
+          html += "    </div>";
           html +=
             '    <div class="redactoCookiesListRight">' +
-            redacto.cookie.beautify(cookies[i].split('=').slice(1).join('=')) +
-            '</div>';
-          html += '</li>';
+            redacto.cookie.beautify(cookies[i].split("=").slice(1).join("=")) +
+            "</div>";
+          html += "</li>";
         }
-        html += '</ul>';
+        html += "</ul>";
       } else {
         html += '<div class="redactoCookiesListMain">';
         html +=
           '    <div class="redactoCookiesListLeft"><strong>-</strong></div>';
         html += '    <div class="redactoCookiesListRight"></div>';
-        html += '</div>';
+        html += "</div>";
       }
 
       html += '<div class="redactoHidden redacto-spacer-20"></div>';
 
-      if (document.getElementById('redactoCookiesList') !== null) {
-        document.getElementById('redactoCookiesList').innerHTML = html;
+      if (document.getElementById("redactoCookiesList") !== null) {
+        document.getElementById("redactoCookiesList").innerHTML = html;
       }
 
-      if (document.getElementById('redactoCookiesNumber') !== null) {
-        document.getElementById('redactoCookiesNumber').innerHTML = nb;
+      if (document.getElementById("redactoCookiesNumber") !== null) {
+        document.getElementById("redactoCookiesNumber").innerHTML = nb;
         document
-          .getElementById('redactoCookiesNumber')
+          .getElementById("redactoCookiesNumber")
           .setAttribute(
-            'aria-label',
-            nb + ' cookie' + s + ' - ' + redacto.lang.toggleInfoBox
+            "aria-label",
+            nb + " cookie" + s + " - " + redacto.lang.toggleInfoBox
           );
         document
-          .getElementById('redactoCookiesNumber')
+          .getElementById("redactoCookiesNumber")
           .setAttribute(
-            'title',
-            nb + ' cookie' + s + ' - ' + redacto.lang.toggleInfoBox
+            "title",
+            nb + " cookie" + s + " - " + redacto.lang.toggleInfoBox
           );
       }
 
-      if (document.getElementById('redactoCookiesNumberBis') !== null) {
-        document.getElementById('redactoCookiesNumberBis').innerHTML =
-          nb + ' cookie' + s;
+      if (document.getElementById("redactoCookiesNumberBis") !== null) {
+        document.getElementById("redactoCookiesNumberBis").innerHTML =
+          nb + " cookie" + s;
       }
 
-      var purgeBtns = document.getElementsByClassName('purgeBtn');
+      var purgeBtns = document.getElementsByClassName("purgeBtn");
       for (i = 0; i < purgeBtns.length; i++) {
         redacto.addClickEventToElement(purgeBtns[i], function () {
           redacto.cookie.purge([this.dataset.cookie]);
           redacto.cookie.number();
-          redacto.userInterface.jsSizing('cookie');
+          redacto.userInterface.jsSizing("cookie");
           return false;
         });
       }
@@ -3176,20 +3178,20 @@ var redacto = {
   fixSelfXSS: function (html) {
     return html
       .toString()
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   },
   getLanguage: function () {
-    'use strict';
+    "use strict";
 
     var availableLanguages =
-        'ar,bg,ca,cn,cs,da,de,et,el,en,es,fi,fr,hr,hu,it,ja,ko,lb,lt,lv,nl,no,oc,pl,pt,ro,ru,se,sk,sq,sv,tr,uk,vi,zh',
-      defaultLanguage = 'en';
+        "ar,bg,ca,cn,cs,da,de,et,el,en,es,fi,fr,hr,hu,it,ja,ko,lb,lt,lv,nl,no,oc,pl,pt,ro,ru,se,sk,sq,sv,tr,uk,vi,zh",
+      defaultLanguage = "en";
 
-    if (redactoForceLanguage !== '') {
+    if (redactoForceLanguage !== "") {
       if (availableLanguages.indexOf(redactoForceLanguage) !== -1) {
         return redactoForceLanguage;
       }
@@ -3197,16 +3199,16 @@ var redacto = {
 
     // get the html lang
     if (
-      document.documentElement.getAttribute('lang') !== undefined &&
-      document.documentElement.getAttribute('lang') !== null &&
-      document.documentElement.getAttribute('lang') !== ''
+      document.documentElement.getAttribute("lang") !== undefined &&
+      document.documentElement.getAttribute("lang") !== null &&
+      document.documentElement.getAttribute("lang") !== ""
     ) {
       if (
         availableLanguages.indexOf(
-          document.documentElement.getAttribute('lang').substr(0, 2)
+          document.documentElement.getAttribute("lang").substr(0, 2)
         ) !== -1
       ) {
-        return document.documentElement.getAttribute('lang').substr(0, 2);
+        return document.documentElement.getAttribute("lang").substr(0, 2);
       }
     }
 
@@ -3229,9 +3231,9 @@ var redacto = {
     return defaultLanguage;
   },
   getLocale: function () {
-    'use strict';
+    "use strict";
     if (!navigator) {
-      return 'en_US';
+      return "en_US";
     }
 
     var lang =
@@ -3242,24 +3244,24 @@ var redacto = {
         null,
       userLanguage = lang ? lang.substr(0, 2) : null;
 
-    if (userLanguage === 'fr') {
-      return 'fr_FR';
-    } else if (userLanguage === 'en') {
-      return 'en_US';
-    } else if (userLanguage === 'de') {
-      return 'de_DE';
-    } else if (userLanguage === 'es') {
-      return 'es_ES';
-    } else if (userLanguage === 'it') {
-      return 'it_IT';
-    } else if (userLanguage === 'pt') {
-      return 'pt_PT';
-    } else if (userLanguage === 'nl') {
-      return 'nl_NL';
-    } else if (userLanguage === 'el') {
-      return 'el_EL';
+    if (userLanguage === "fr") {
+      return "fr_FR";
+    } else if (userLanguage === "en") {
+      return "en_US";
+    } else if (userLanguage === "de") {
+      return "de_DE";
+    } else if (userLanguage === "es") {
+      return "es_ES";
+    } else if (userLanguage === "it") {
+      return "it_IT";
+    } else if (userLanguage === "pt") {
+      return "pt_PT";
+    } else if (userLanguage === "nl") {
+      return "nl_NL";
+    } else if (userLanguage === "el") {
+      return "el_EL";
     } else {
-      return 'en_US';
+      return "en_US";
     }
   },
   addScript: function (
@@ -3271,17 +3273,17 @@ var redacto = {
     attrVal,
     internal
   ) {
-    'use strict';
+    "use strict";
     var script,
       done = false;
 
     if (execute === false) {
-      if (typeof callback === 'function') {
+      if (typeof callback === "function") {
         callback();
       }
     } else {
-      script = document.createElement('script');
-      if (id !== undefined && id !== '') {
+      script = document.createElement("script");
+      if (id !== undefined && id !== "") {
         script.id = id;
       }
       script.async = true;
@@ -3291,7 +3293,7 @@ var redacto = {
         script.setAttribute(attrName, attrVal);
       }
 
-      if (typeof callback === 'function') {
+      if (typeof callback === "function") {
         if (!redacto.parameters.useExternalJs || !internal) {
           script.onreadystatechange = script.onload = function () {
             var state = script.readyState;
@@ -3306,7 +3308,7 @@ var redacto = {
       }
 
       if (!redacto.parameters.useExternalJs || !internal) {
-        document.getElementsByTagName('head')[0].appendChild(script);
+        document.getElementsByTagName("head")[0].appendChild(script);
       }
     }
   },
@@ -3314,7 +3316,7 @@ var redacto = {
     redacto.addScript(url, id, callback, execute, attrName, attrVal, true);
   },
   checkIfExist: function (elemId) {
-    'use strict';
+    "use strict";
     return (
       document.getElementById(elemId) !== null &&
       document.getElementById(elemId).offsetWidth !== 0 &&
@@ -3323,9 +3325,9 @@ var redacto = {
   },
   makeAsync: {
     antiGhost: 0,
-    buffer: '',
+    buffer: "",
     init: function (url, id) {
-      'use strict';
+      "use strict";
       var savedWrite = document.write,
         savedWriteln = document.writeln;
 
@@ -3333,7 +3335,7 @@ var redacto = {
         redacto.makeAsync.buffer += content;
       };
       document.writeln = function (content) {
-        redacto.makeAsync.buffer += content.concat('\n');
+        redacto.makeAsync.buffer += content.concat("\n");
       };
 
       setTimeout(function () {
@@ -3344,18 +3346,18 @@ var redacto = {
       redacto.makeAsync.getAndParse(url, id);
     },
     getAndParse: function (url, id) {
-      'use strict';
+      "use strict";
       if (redacto.makeAsync.antiGhost > 9) {
         redacto.makeAsync.antiGhost = 0;
         return;
       }
       redacto.makeAsync.antiGhost += 1;
-      redacto.addInternalScript(url, '', function () {
+      redacto.addInternalScript(url, "", function () {
         if (document.getElementById(id) !== null) {
           document.getElementById(id).innerHTML +=
             "<span class='redacto-display-none'>&nbsp;</span>" +
             redacto.makeAsync.buffer;
-          redacto.makeAsync.buffer = '';
+          redacto.makeAsync.buffer = "";
           redacto.makeAsync.execJS(id);
         }
       });
@@ -3368,59 +3370,59 @@ var redacto = {
         return;
       }
 
-      scripts = document.getElementById(id).getElementsByTagName('script');
+      scripts = document.getElementById(id).getElementsByTagName("script");
       for (i = 0; i < scripts.length; i += 1) {
         type =
-          scripts[i].getAttribute('type') !== null
-            ? scripts[i].getAttribute('type')
-            : '';
-        if (type === '') {
+          scripts[i].getAttribute("type") !== null
+            ? scripts[i].getAttribute("type")
+            : "";
+        if (type === "") {
           type =
-            scripts[i].getAttribute('language') !== null
-              ? scripts[i].getAttribute('language')
-              : '';
+            scripts[i].getAttribute("language") !== null
+              ? scripts[i].getAttribute("language")
+              : "";
         }
         if (
-          scripts[i].getAttribute('src') !== null &&
-          scripts[i].getAttribute('src') !== ''
+          scripts[i].getAttribute("src") !== null &&
+          scripts[i].getAttribute("src") !== ""
         ) {
           childId = id + Math.floor(Math.random() * 99999999999);
           document.getElementById(id).innerHTML +=
             '<div id="' + childId + '"></div>';
           redacto.makeAsync.getAndParse(
-            scripts[i].getAttribute('src'),
+            scripts[i].getAttribute("src"),
             childId
           );
-        } else if (type.indexOf('javascript') !== -1 || type === '') {
+        } else if (type.indexOf("javascript") !== -1 || type === "") {
           eval(scripts[i].innerHTML);
         }
       }
     },
   },
   fallback: function (matchClass, content, noInner) {
-    'use strict';
+    "use strict";
     var selector = matchClass
       .map(function (cls) {
-        return '.' + cls;
+        return "." + cls;
       })
-      .join(', ');
+      .join(", ");
 
     var elems = document.querySelectorAll(selector);
 
     for (var i = 0; i < elems.length; i++) {
       var elem = elems[i];
 
-      var width = redacto.getElemAttr(elem, 'width'),
-        height = redacto.getElemAttr(elem, 'height');
+      var width = redacto.getElemAttr(elem, "width"),
+        height = redacto.getElemAttr(elem, "height");
 
-      if (width !== '') {
+      if (width !== "") {
         elem.style.width = redacto.getStyleSize(width);
       }
-      if (height !== '') {
+      if (height !== "") {
         elem.style.height = redacto.getStyleSize(height);
       }
 
-      if (typeof content === 'function') {
+      if (typeof content === "function") {
         if (noInner === true) {
           content(elem);
         } else {
@@ -3432,39 +3434,39 @@ var redacto = {
     }
   },
   engage: function (id) {
-    'use strict';
-    var html = '',
+    "use strict";
+    var html = "",
       r = Math.floor(Math.random() * 100000),
-      engage = redacto.services[id].name + ' ' + redacto.lang.fallback;
+      engage = redacto.services[id].name + " " + redacto.lang.fallback;
 
-    if (redacto.lang['engage-' + id] !== undefined) {
-      engage = redacto.lang['engage-' + id];
+    if (redacto.lang["engage-" + id] !== undefined) {
+      engage = redacto.lang["engage-" + id];
     }
 
     html += '<div class="tac_activate tac_activate_' + id + '">';
     html += '   <div class="tac_float">';
-    html += '      ' + engage;
+    html += "      " + engage;
     html +=
       '      <button aria-label="' +
       redacto.lang.allow +
-      ' ' +
+      " " +
       redacto.services[id].name +
       '" type="button" class="redactoAllow" id="Eng' +
       r +
-      'ed' +
+      "ed" +
       id +
       '">';
     html +=
       '          <span class="redactoCheck" aria-hidden="true"></span> ' +
       redacto.lang.allow;
-    html += '       </button>';
-    html += '   </div>';
-    html += '</div>';
+    html += "       </button>";
+    html += "   </div>";
+    html += "</div>";
 
     return html;
   },
   extend: function (a, b) {
-    'use strict';
+    "use strict";
     var prop;
     for (prop in b) {
       if (b.hasOwnProperty(prop)) {
@@ -3472,16 +3474,16 @@ var redacto = {
       }
     }
   },
-  proTemp: '',
+  proTemp: "",
   proTimer: function () {
-    'use strict';
+    "use strict";
     setTimeout(
       redacto.proPing,
       Math.floor(Math.random() * (1200 - 500 + 1)) + 500
     );
   },
   pro: function (list) {
-    'use strict';
+    "use strict";
     redacto.proTemp += list;
     clearTimeout(redacto.proTimer);
     redacto.proTimer = setTimeout(
@@ -3490,30 +3492,30 @@ var redacto = {
     );
   },
   proPing: function () {
-    'use strict';
+    "use strict";
     if (
-      redacto.uuid !== '' &&
+      redacto.uuid !== "" &&
       redacto.uuid !== undefined &&
-      redacto.proTemp !== '' &&
+      redacto.proTemp !== "" &&
       redactoStatsEnabled
     ) {
-      var div = document.getElementById('redactoPremium'),
+      var div = document.getElementById("redactoPremium"),
         timestamp = new Date().getTime(),
-        url = '#'; // Logging URL removed for Redacto rebrand
+        url = "#"; // Logging URL removed for Redacto rebrand
 
       if (div === null) {
         return;
       }
 
-      url += 'account=' + redacto.uuid + '&';
-      url += 'domain=' + redacto.domain + '&';
-      url += 'status=' + encodeURIComponent(redacto.proTemp) + '&';
-      url += '_time=' + timestamp;
+      url += "account=" + redacto.uuid + "&";
+      url += "domain=" + redacto.domain + "&";
+      url += "status=" + encodeURIComponent(redacto.proTemp) + "&";
+      url += "_time=" + timestamp;
 
       div.innerHTML =
         '<img src="' + url + '" class="redacto-display-none" alt="" />';
 
-      redacto.proTemp = '';
+      redacto.proTemp = "";
     }
 
     redacto.cookie.number();
@@ -3523,7 +3525,7 @@ var redacto = {
          Utility function to Add or update the fields of obj1 with the ones in obj2
          */
     for (var key in custom) {
-      if (key === '__proto__' || key === 'constructor') continue;
+      if (key === "__proto__" || key === "constructor") continue;
       if (custom.hasOwnProperty(key)) {
         if (custom[key] instanceof Object) {
           source[key] = redacto.AddOrUpdate(source[key], custom[key]);
@@ -3535,72 +3537,72 @@ var redacto = {
     return source;
   },
   getElemWidth: function (elem) {
-    return redacto.getElemAttr(elem, 'width') || elem.clientWidth;
+    return redacto.getElemAttr(elem, "width") || elem.clientWidth;
   },
   getElemHeight: function (elem) {
-    return redacto.getElemAttr(elem, 'height') || elem.clientHeight;
+    return redacto.getElemAttr(elem, "height") || elem.clientHeight;
   },
   getElemAttr: function (elem, attr) {
     var attribute =
-      elem.getAttribute('data-' + attr) ||
+      elem.getAttribute("data-" + attr) ||
       elem.getAttribute(attr) ||
-      elem.getAttribute(attr.startsWith('data-') ? attr.slice(5) : attr);
+      elem.getAttribute(attr.startsWith("data-") ? attr.slice(5) : attr);
 
     // security: only allow real url on the url attr
     if (
-      (attr === 'url' || attr === 'data-url' || attr === 'data-src') &&
+      (attr === "url" || attr === "data-url" || attr === "data-src") &&
       !/^https?:\/\/[^\s]+$/.test(elem.getAttribute(attr))
     ) {
-      return '';
+      return "";
     }
 
     // security: disallow data-srcdoc attr to avoid xss
-    if (attr === 'srcdoc' || attr === 'data-srcdoc') {
-      attribute = elem.getAttribute('srcdoc');
+    if (attr === "srcdoc" || attr === "data-srcdoc") {
+      attribute = elem.getAttribute("srcdoc");
     }
 
-    if (typeof attribute === 'string') {
+    if (typeof attribute === "string") {
       return redacto.fixSelfXSS(attribute);
     }
 
-    return '';
+    return "";
   },
   getStyleSize: function (value) {
     if (value == null) {
-      return 'auto';
+      return "auto";
     }
 
     value = String(value).trim();
 
     var units = [
-      'px',
-      '%',
-      'em',
-      'rem',
-      'vh',
-      'vw',
-      'vmin',
-      'vmax',
-      'ch',
-      'ex',
-      'pt',
-      'pc',
-      'cm',
-      'mm',
-      'in',
-      'q',
+      "px",
+      "%",
+      "em",
+      "rem",
+      "vh",
+      "vw",
+      "vmin",
+      "vmax",
+      "ch",
+      "ex",
+      "pt",
+      "pc",
+      "cm",
+      "mm",
+      "in",
+      "q",
     ];
-    var pattern = new RegExp('^\\d+(\\.\\d+)?(' + units.join('|') + ')$');
+    var pattern = new RegExp("^\\d+(\\.\\d+)?(" + units.join("|") + ")$");
 
     if (pattern.test(value)) {
       return value;
     }
 
     if (/^\d+(\.\d+)?$/.test(value)) {
-      return value + 'px';
+      return value + "px";
     }
 
-    return 'auto';
+    return "auto";
   },
   addClickEventToId: function (elemId, func) {
     redacto.addClickEventToElement(document.getElementById(elemId), func);
@@ -3608,9 +3610,9 @@ var redacto = {
   addClickEventToElement: function (e, func) {
     if (e) {
       if (e.addEventListener) {
-        e.addEventListener('click', func);
+        e.addEventListener("click", func);
       } else {
-        e.attachEvent('onclick', func);
+        e.attachEvent("onclick", func);
       }
     }
   },
@@ -3619,13 +3621,13 @@ var redacto = {
       redacto.job.push(e);
     });
     var i;
-    var allowBtns = document.getElementsByClassName('redactoAllow');
+    var allowBtns = document.getElementsByClassName("redactoAllow");
     for (i = 0; i < allowBtns.length; i++) {
       redacto.addClickEventToElement(allowBtns[i], function () {
         redacto.userInterface.respond(this, true);
       });
     }
-    var denyBtns = document.getElementsByClassName('redactoDeny');
+    var denyBtns = document.getElementsByClassName("redactoDeny");
     for (i = 0; i < denyBtns.length; i++) {
       redacto.addClickEventToElement(denyBtns[i], function () {
         redacto.userInterface.respond(this, false);
