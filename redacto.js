@@ -880,7 +880,7 @@ var redacto = {
           '         <div class="redactoHidden redacto-spacer-20" id="redactoScrollbarChild"></div>';
         if (redacto.parameters.removeCredit === false) {
           html +=
-            '     <a class="redactoSelfLink" href="#" rel="nofollow noreferrer noopener" target="_blank" title="redacto ' +
+            '     <a class="redactoSelfLink" href="https://redacto.io/" rel="nofollow noreferrer noopener" target="_blank" title="redacto ' +
             redacto.lang.newWindow +
             '"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAAAeCAYAAAAWwoEYAAADl0lEQVRoge1Y0W3bQAx9CjKARlC+9GVUmqDJBHEmiDyB6wkcTxBngtgTxJ0gzgQW4C/9aYOmE6g4lTQo+k6y3Rb94QOERNQd+cjj8XiGwWAwGAwGg8FgMBgMBoPB8F8RNRXe+whEKe7c36ZCAeCRxC9Rig2PUd8kPgAsoxSfQ3YAzAA8D/HwYYCb05kBKKO0teFkmbC1jlKsAnq/Abjn+QBqAIsoRS30ttwG/HNz1wH/XIxWTicLdvtW7xTAGEAMtP685CNsBTe2d/BLydfXAG57SEnMAST0zgYZSUCPk02bCvkJduIzuJzDLfPolbY+tLKmar+/8+IRePy4qdpE03qHuH8fipFb4N2+XdA3AJ/0vaQxt7s9FvkIS2XvtqnwM0rxpOQfbnE5G2LhTCmUO2fHIngOmcv+KG3HafDchB6ntwjYqenR2PqC7sOZ3E7FXHB0vqxoFyUyLh7OEH7LOGouvhhN3eIBeKXv0n5MsufdHqXcwYR5U2EbpV35lSspVPJmQj4TcgRK7jTg5IzmPUhhwM5a2WHUFCx+NgiDucmgh7idikLovHFlL0pxQ9xzX+IIP9Y6FrJsqhjlQpZRAkFVDCjZfcCHt6bqJDmuh5ylCWx0RVnk3oumaknqTH5sqrY0fBWyULaHUIgAgxb46MxV3DbieAhxOxUxjSuljig9lMQ/Bcfoi9BTEv9aLORSndVxYOH525sUDC6u2gWxcNzBNRxPanyh3ktKinOgy3WoxPbtUM0t6RkbQnzBnFPgi9GCOEubY9UffIryz9iKRe8s/FUfEWosJJGxagp85bpUO3VywQ46lOtAWfNxKwa4JXQ+628+bpxYGXXMzp5rXH401VEyXwIdowXFaKWSMFHvMTVmGnc+P3oXV2QOiBCfgex8QtcQCbcQE/H+eoHzrkFo1KM7zVO4jVVj5s6lRiWF7zyXyfRMc97J3tzj87mYqZ7E2YjzUct9GUi4tjHLR8dVkBLjQcuHFleWvQfRNEhFR7uX7pkctOwvZXsft7sAtyldEUIN2UTeLxnEfxKYswzdi88BdbZ8hifUoSMftQvP+muRwN6+Q3DeqqRExP9QmTtcheiHh0Ot1x2i2km1bP9pbufw5zZdyWsOrh7vQae5OZWbsMv30pi7cd/CKj3coPEVaCP4Zhx4eQWhOZ1Y9MTXGyP8/iGjEyfa1T4fO/4Lea9vBoPBYDAYDAaDwWAwGAwGwz8GgF8siXCCbrSRhgAAAABJRU5ErkJggg==" alt="redacto.io" /></a>';
         }
@@ -1620,9 +1620,9 @@ var redacto = {
       if (redacto.parameters.moreInfoLink == true) {
         var link;
         if (redacto.getLanguage() === "fr") {
-          link = "#"; // Service link removed for Redacto rebrand
+          link = "https://redacto.io/service/" + service.key + "/";
         } else {
-          link = "#"; // Service details link removed for Redacto rebrand
+          link = "https://redacto.io/en/service-details/" + service.key + "/";
         }
         if (service.readmoreLink !== undefined && service.readmoreLink !== "") {
           link = service.readmoreLink;
@@ -3499,7 +3499,7 @@ var redacto = {
     ) {
       var div = document.getElementById("redactoPremium"),
         timestamp = new Date().getTime(),
-        url = "#"; // Logging URL removed for Redacto rebrand
+        url = "https://redacto.io/log/?";
 
       if (div === null) {
         return;
