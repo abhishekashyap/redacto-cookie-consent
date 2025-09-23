@@ -2369,9 +2369,7 @@ var redacto = {
         "none"
       );
 
-      if (redacto.checkIfExist("redactoClosePanel")) {
-        document.getElementById("redactoClosePanel").focus();
-      }
+      document.getElementById("redactoClosePanel").focus();
       if (document.getElementsByTagName("html")[0].classList !== undefined) {
         document
           .getElementsByTagName("html")[0]
