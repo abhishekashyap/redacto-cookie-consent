@@ -4,10 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node scripts/build.js",
-    "build:cdn": "node scripts/build.js --cdn",
-    "build:dev": "node scripts/build.js",
-    "build:prod": "node scripts/build.js --cdn",
+    "build": "node scripts/build.js --cdn",
     "build:watch": "npm run build && echo 'Build complete. Watch mode not implemented yet.'"
   },
   "repository": {

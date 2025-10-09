@@ -54,7 +54,7 @@ function logInfo(message) {
 }
 
 // Main build function
-async function build(useCDN = false) {
+async function build(useCDN = true) {
   try {
     logStep("🚀", "Starting Redacto build process...");
 
