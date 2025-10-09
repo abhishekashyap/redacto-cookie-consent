@@ -1,7 +1,7 @@
 /**
  * Redacto v0.0.1 - Cookie Consent with Script Blocking
  * Automatically detects and blocks third-party scripts
- * Scalable pattern for adding more services
+ * Scalable pattern for addgaing more services
  */
 
 (function () {
