@@ -1,0 +1,28 @@
+{
+  "name": "redacto-cookie-consent",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build:js && npm run build:css",
+    "build:js": "terser js/index.js -o dist/redacto.min.js -c -m",
+    "build:css": "cleancss css/index.css -o dist/redacto.min.css",
+    "build:watch": "npm run build && echo 'Build complete. Watch mode not implemented yet.'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhishekashyap/redacto-cookie-consent.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhishekashyap/redacto-cookie-consent/issues"
+  },
+  "homepage": "https://github.com/abhishekashyap/redacto-cookie-consent#readme",
+  "description": "",
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "terser": "^5.44.0"
+  }
+}
