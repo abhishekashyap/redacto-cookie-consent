@@ -7,7 +7,7 @@ const { execSync } = require("child_process");
 // Configuration
 const CDN_URL =
   "https://cdn.jsdelivr.net/gh/abhishekashyap/redacto-cookie-consent@main/dist/redacto.min.css";
-const LOCAL_PATH = "redacto/redacto.css";
+const LOCAL_PATH = "css/index.css";
 
 // Paths
 const ROOT_DIR = path.join(__dirname, "..");

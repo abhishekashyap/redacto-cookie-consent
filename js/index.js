@@ -961,7 +961,7 @@
   function loadRedactoCSS() {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "redacto/redacto.css";
+    link.href = "css/index.css";
     link.type = "text/css";
     document.head.appendChild(link);
   }
