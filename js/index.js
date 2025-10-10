@@ -1034,6 +1034,11 @@
               <button class="redacto-button redacto-button-selected" id="redacto-accept-selected" style="display: none;">Accept Selected</button>
               <button class="redacto-button redacto-button-secondary">Accept Only Necessary</button>
             </div>
+            
+            <div class="redacto-modal-powered-by">
+              <span>Powered by</span>
+              <a href="https://redacto.io" target="_blank" rel="noopener noreferrer" class="redacto-powered-by-link">Redacto</a>
+            </div>
           </div>
         </div>
       `;
