@@ -966,6 +966,57 @@
     document.head.appendChild(link);
   }
 
+  function showFloatingIcon() {
+    // Remove existing floating icon if any
+    const existingIcon = document.getElementById("redacto-floating-icon");
+    if (existingIcon) {
+      existingIcon.remove();
+    }
+
+    // Create floating icon
+    const floatingIcon = document.createElement("button");
+    floatingIcon.id = "redacto-floating-icon";
+    floatingIcon.className = "redacto-floating-icon";
+    floatingIcon.setAttribute("aria-label", "Open cookie preferences");
+    floatingIcon.title = "Cookie Preferences";
+
+    floatingIcon.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16.0283 32C13.0832 32 10.3835 31.3015 7.92921 29.9044C5.51269 28.5074 3.58702 26.6006 2.15221 24.1841C0.717403 21.7676 0 19.0301 0 15.9717C0 12.8755 0.717403 10.1381 2.15221 7.7593C3.58702 5.34278 5.51269 3.45487 7.92921 2.09558C10.3457 0.698525 13.0454 0 16.0283 0C19.049 0 21.7487 0.698525 24.1274 2.09558C26.544 3.45487 28.4507 5.34278 29.8478 7.7593C31.2826 10.1381 32 12.8755 32 15.9717C32 19.0679 31.2826 21.8242 29.8478 24.2407C28.413 26.6572 26.4873 28.564 24.0708 29.9611C21.6543 31.3204 18.9735 32 16.0283 32Z" fill="#4961F6"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M21.5705 7.88996L18.6696 6.71595C18.3491 6.58628 17.9866 6.76014 17.8869 7.09125L15.8567 13.8357L12.2364 7.79913C12.0484 7.4857 11.6229 7.41821 11.3472 7.65808L8.98584 9.71237C8.72513 9.93917 8.7156 10.3409 8.96526 10.5798L13.9104 15.3122L6.90657 15.1203C6.54144 15.1103 6.25593 15.4326 6.30976 15.794L6.77104 18.8905C6.82199 19.2325 7.15572 19.4568 7.49145 19.3747L14.2941 17.7105L10.9688 23.7033C10.7915 24.0228 10.9456 24.4249 11.291 24.5438L14.25 25.5626C14.5768 25.6751 14.9297 25.4823 15.0117 25.1464L16.6075 18.6106L20.3219 24.804C20.5098 25.1174 20.9353 25.1849 21.2111 24.945L23.5724 22.8907C23.8331 22.6639 23.8427 22.2622 23.593 22.0232L18.6586 17.3012L25.6953 17.1828C26.0605 17.1767 26.3315 16.8421 26.2618 16.4834L25.6642 13.4103C25.5982 13.0708 25.2549 12.8615 24.9231 12.9584L17.9312 15.0003L21.8478 8.74631C22.0418 8.43665 21.9091 8.02698 21.5705 7.88996Z" fill="white"/>
+</svg>
+
+    `;
+
+    // Add click handler to reopen modal
+    floatingIcon.addEventListener("click", function () {
+      console.log("[Redacto] 🍪 Floating icon clicked - reopening modal");
+      hideFloatingIcon();
+      showCookieConsentPopup();
+    });
+
+    document.body.appendChild(floatingIcon);
+
+    // Show with animation
+    setTimeout(() => {
+      floatingIcon.classList.add("show");
+    }, 100);
+
+    console.log("[Redacto] 🎯 Floating icon displayed with Redacto logo");
+  }
+
+  function hideFloatingIcon() {
+    const floatingIcon = document.getElementById("redacto-floating-icon");
+    if (floatingIcon) {
+      floatingIcon.classList.remove("show");
+      setTimeout(() => {
+        if (floatingIcon.parentNode) {
+          floatingIcon.parentNode.removeChild(floatingIcon);
+        }
+      }, 300);
+      console.log("[Redacto] 🎯 Floating icon hidden");
+    }
+  }
+
   function createCookieConsentPopup() {
     const categoriesHTML = Object.entries(CATEGORIES)
       .map(([key, category]) => {
@@ -1054,6 +1105,7 @@
 
     setTimeout(() => {
       popup?.parentElement?.remove();
+      showFloatingIcon();
     }, 300);
   }
 
@@ -1177,6 +1229,8 @@
   }
 
   function showCookieConsentPopup() {
+    hideFloatingIcon();
+
     const popupContainer = document.createElement("div");
     popupContainer.innerHTML = createCookieConsentPopup();
     document.body.appendChild(popupContainer);
@@ -1383,6 +1437,15 @@
 
     generateUserId: function () {
       return generateUserId();
+    },
+
+    // Floating icon management
+    showFloatingIcon: function () {
+      showFloatingIcon();
+    },
+
+    hideFloatingIcon: function () {
+      hideFloatingIcon();
     },
   };
 
