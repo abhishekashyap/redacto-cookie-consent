@@ -439,6 +439,8 @@
 
 /* Floating Icon */
 .redacto-floating-icon {
+  box-sizing: border-box;
+  padding: 0;
   position: fixed;
   bottom: var(--redacto-spacing-lg);
   right: var(--redacto-spacing-lg);
