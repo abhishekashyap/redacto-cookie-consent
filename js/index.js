@@ -1088,7 +1088,7 @@
             
             <div class="redacto-modal-powered-by">
               <span>Powered by</span>
-              <a href="https://redacto.io" target="_blank" rel="noopener noreferrer" class="redacto-powered-by-link">Redacto</a>
+              <a href="https://redacto.ai" target="_blank" rel="noopener noreferrer" class="redacto-powered-by-link">Redacto</a>
             </div>
           </div>
         </div>
@@ -1316,6 +1316,11 @@
           unblockCategory(category);
         }
       });
+
+      // Show floating icon so user can reopen modal to change preferences
+      setTimeout(() => {
+        showFloatingIcon();
+      }, 1000);
     }
 
     state.initialized = true;
