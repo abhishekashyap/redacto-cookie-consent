@@ -1111,7 +1111,7 @@
   function loadRedactoCSS() {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = `https://cdn.jsdelivr.net/gh/abhishekashyap/redacto-cookie-consent@main/dist/redacto.min.css`;
+    link.href = "scss/index.css";
     link.type = "text/css";
     document.head.appendChild(link);
   }
