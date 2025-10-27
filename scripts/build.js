@@ -12,7 +12,8 @@ const LOCAL_PATH = "scss/index.css";
 // Paths
 const ROOT_DIR = path.join(__dirname, "..");
 const JS_SOURCE = path.join(ROOT_DIR, "js", "index.js");
-const CSS_SOURCE = path.join(ROOT_DIR, "css", "index.css");
+const SCSS_SOURCE = path.join(ROOT_DIR, "scss", "index.scss");
+const CSS_SOURCE = path.join(ROOT_DIR, "scss", "index.css");
 const DIST_DIR = path.join(ROOT_DIR, "dist");
 const JS_DIST = path.join(DIST_DIR, "redacto.min.js");
 const CSS_DIST = path.join(DIST_DIR, "redacto.min.css");
@@ -64,10 +65,24 @@ async function build(useCDN = true) {
       fs.mkdirSync(DIST_DIR, { recursive: true });
     }
 
-    // Step 1: Minify JavaScript
+    // Step 1: Compile SCSS to CSS
+    logStep("🎨", "Compiling SCSS to CSS...");
+    try {
+      execSync(`sass "${SCSS_SOURCE}" "${CSS_SOURCE}" --no-source-map`, {
+        stdio: "pipe",
+      });
+      const compiledSize = fs.statSync(CSS_SOURCE).size;
+      logSuccess(
+        `SCSS compiled to CSS (${(compiledSize / 1024).toFixed(1)}KB)`
+      );
+    } catch (error) {
+      throw new Error(`SCSS compilation failed: ${error.message}`);
+    }
+
+    // Step 2: Minify JavaScript
     logStep("📦", "Minifying JavaScript...");
     try {
-      execSync(`terser "${JS_SOURCE}" -o "${JS_DIST}" -c -m`, {
+      execSync(`npx terser "${JS_SOURCE}" -o "${JS_DIST}" -c -m`, {
         stdio: "pipe",
       });
       const jsSize = fs.statSync(JS_DIST).size;
@@ -76,17 +91,19 @@ async function build(useCDN = true) {
       throw new Error(`JavaScript minification failed: ${error.message}`);
     }
 
-    // Step 2: Minify CSS
+    // Step 3: Minify CSS
     logStep("🎨", "Minifying CSS...");
     try {
-      execSync(`cleancss "${CSS_SOURCE}" -o "${CSS_DIST}"`, { stdio: "pipe" });
+      execSync(`npx cleancss "${CSS_SOURCE}" -o "${CSS_DIST}"`, {
+        stdio: "pipe",
+      });
       const cssSize = fs.statSync(CSS_DIST).size;
       logSuccess(`CSS minified (${(cssSize / 1024).toFixed(1)}KB)`);
     } catch (error) {
       throw new Error(`CSS minification failed: ${error.message}`);
     }
 
-    // Step 3: Replace CSS path with CDN (if requested)
+    // Step 4: Replace CSS path with CDN (if requested)
     if (useCDN) {
       logStep("🌐", "Replacing CSS path with CDN URL...");
       try {
@@ -112,7 +129,18 @@ async function build(useCDN = true) {
       }
     }
 
-    // Step 4: Generate build info
+    // Step 5: Clean up intermediate CSS file
+    logStep("🧹", "Cleaning up intermediate files...");
+    try {
+      if (fs.existsSync(CSS_SOURCE)) {
+        fs.unlinkSync(CSS_SOURCE);
+        logSuccess("Intermediate CSS file removed");
+      }
+    } catch (error) {
+      logWarning(`Failed to remove intermediate CSS file: ${error.message}`);
+    }
+
+    // Step 6: Generate build info
     logStep("📊", "Generating build information...");
     const jsSize = fs.statSync(JS_DIST).size;
     const cssSize = fs.statSync(CSS_DIST).size;

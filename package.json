@@ -21,6 +21,7 @@
   "description": "",
   "devDependencies": {
     "clean-css-cli": "^5.6.3",
+    "sass": "^1.93.2",
     "terser": "^5.44.0"
   }
 }
