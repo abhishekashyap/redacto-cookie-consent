@@ -1,0 +1,47 @@
+/* Floating Icon */
+.redacto-floating-icon {
+    box-sizing: border-box;
+    padding: 0;
+    position: fixed;
+    bottom: var(--cc-modal-margin);
+    right: var(--cc-modal-margin);
+    width: 56px;
+    height: 56px;
+    background: var(--cc-btn-primary-bg);
+    color: var(--cc-btn-primary-color);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--cc-modal-transition-duration);
+    box-shadow: var(--cc-modal-box-shadow);
+    z-index: var(--cc-z-index);
+    font-size: 24px;
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    visibility: hidden;
+  }
+  
+  .redacto-floating-icon.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+  }
+  
+  .redacto-floating-icon:hover {
+    background: var(--cc-btn-primary-hover-bg);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: var(--cc-modal-box-shadow);
+  }
+  
+  .redacto-floating-icon:active {
+    transform: translateY(0) scale(0.95);
+  }
+  
+  .redacto-floating-icon svg {
+    width: 46px;
+    height: 46px;
+    fill: currentColor;
+  }
