@@ -94,6 +94,13 @@
 
   // Build category mappings
   const CATEGORIES = {
+    strictly_necessary: {
+      name: "Strictly Necessary Cookies",
+      description:
+        "These cookies are essential for the website to function properly. They cannot be disabled.",
+      required: true,
+      services: [],
+    },
     analytics: {
       name: "Analytics Cookies",
       description: "Help us understand how visitors interact with our website",
@@ -133,6 +140,56 @@
   };
 
   // ========================================
+  // UI Configuration (Backend Config)
+  // ========================================
+  const UI_CONFIG = {
+    // Default configuration (fallback)
+    modalType: "box", // "box" or "bar"
+    position: "bottom-right", // "bottom-right", "bottom-left", "top-right", "top-left"
+    colors: {
+      primary: "#30363c", // --cc-btn-primary-bg
+      primaryHover: "#000000", // --cc-btn-primary-hover-bg
+      secondary: "#eaeff2", // --cc-btn-secondary-bg
+      secondaryHover: "#d4dae0", // --cc-btn-secondary-hover-bg
+      background: "#ffffff", // --cc-bg
+      textPrimary: "#2c2f31", // --cc-primary-color
+      textSecondary: "#5e6266", // --cc-secondary-color
+
+      // Toggle/Switch colors
+      toggleOn: "#30363c", // --cc-toggle-on-bg
+      toggleOff: "#667481", // --cc-toggle-off-bg
+      toggleKnob: "#ffffff", // --cc-toggle-on-knob-bg
+
+      // Overlay and borders
+      overlay: "rgba(0, 0, 0, 0.65)", // --cc-overlay-bg
+      separator: "#f0f4f7", // --cc-separator-border-color
+
+      // Cookie category blocks
+      categoryBlock: "#f0f4f7", // --cc-cookie-category-block-bg
+      categoryBlockHover: "#e9eff4", // --cc-cookie-category-block-hover-bg
+
+      // Footer
+      footerBg: "#eaeff2", // --cc-footer-bg
+      footerBorder: "#e4eaed", // --cc-footer-border-color
+    },
+    content: {
+      title: "Cookie Consent",
+      description:
+        'We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.',
+      acceptAllText: "Accept All",
+      personalizeCookiesText: "Personalize Cookies",
+      acceptSelectedText: "Accept Selected",
+      acceptOnlyNecessaryText: "Accept Only Necessary",
+      privacyPolicyLink: "#",
+      termsAndConditionsLink: "#",
+      contactLink: "#",
+    },
+    layout: {
+      showPersonalizeButton: true,
+    },
+  };
+
+  // ========================================
   // State Management
   // ========================================
   const state = {
@@ -145,6 +202,7 @@
     blockedScripts: [],
     blockedInlineScripts: [],
     observer: null,
+    uiConfig: null,
   };
 
   // ========================================
@@ -242,6 +300,129 @@
   // ========================================
   // API Functions
   // ========================================
+
+  // Fetch UI configuration from backend
+  async function fetchUIConfig() {
+    if (
+      !CONFIG.apiEnabled ||
+      !CONFIG.organisationUuid ||
+      !CONFIG.workspaceUuid
+    ) {
+      console.log(
+        "[Redacto] 📡 API disabled or missing configuration, using defaults"
+      );
+      return UI_CONFIG;
+    }
+
+    try {
+      const configUrl = `${API_BASE_URL}/consent/public/organisations/${CONFIG.organisationUuid}/workspaces/${CONFIG.workspaceUuid}/ui-config`;
+
+      console.log("[Redacto] 📡 Fetching UI configuration from:", configUrl);
+
+      const response = await fetch(configUrl, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const config = await response.json();
+        console.log("[Redacto] ✅ UI configuration loaded:", config);
+
+        // Merge with defaults to ensure all properties exist
+        return mergeUIConfig(UI_CONFIG, config);
+      } else {
+        console.warn(
+          "[Redacto] ⚠️ Failed to fetch UI config:",
+          response.status,
+          response.statusText
+        );
+        return UI_CONFIG;
+      }
+    } catch (error) {
+      console.warn("[Redacto] ⚠️ Error fetching UI config:", error);
+      return UI_CONFIG;
+    }
+  }
+
+  // Merge UI configuration with defaults
+  function mergeUIConfig(defaults, backend) {
+    const merged = { ...defaults };
+
+    // Merge colors
+    if (backend.colors) {
+      merged.colors = { ...defaults.colors, ...backend.colors };
+    }
+
+    // Merge content
+    if (backend.content) {
+      merged.content = { ...defaults.content, ...backend.content };
+    }
+
+    // Merge layout
+    if (backend.layout) {
+      merged.layout = { ...defaults.layout, ...backend.layout };
+    }
+
+    // Merge other properties
+    if (backend.modalType) merged.modalType = backend.modalType;
+    if (backend.position) merged.position = backend.position;
+
+    return merged;
+  }
+
+  // Apply dynamic CSS variables based on configuration
+  function applyUIConfig(config) {
+    const root = document.documentElement;
+
+    // Map UI_CONFIG colors to CSS variables that match SCSS color scheme
+    const colorMappings = {
+      // Primary colors
+      primary: "--cc-btn-primary-bg",
+      primaryHover: "--cc-btn-primary-hover-bg",
+      secondary: "--cc-btn-secondary-bg",
+      secondaryHover: "--cc-btn-secondary-hover-bg",
+
+      // Background and text
+      background: "--cc-bg",
+      textPrimary: "--cc-primary-color",
+      textSecondary: "--cc-secondary-color",
+
+      // Toggle colors
+      toggleOn: "--cc-toggle-on-bg",
+      toggleOff: "--cc-toggle-off-bg",
+      toggleKnob: "--cc-toggle-on-knob-bg",
+
+      // Overlay and borders
+      overlay: "--cc-overlay-bg",
+      separator: "--cc-separator-border-color",
+
+      // Category blocks
+      categoryBlock: "--cc-cookie-category-block-bg",
+      categoryBlockHover: "--cc-cookie-category-block-hover-bg",
+
+      // Footer
+      footerBg: "--cc-footer-bg",
+      footerBorder: "--cc-footer-border-color",
+    };
+
+    // Apply color variables using the mapping
+    Object.entries(config.colors).forEach(([key, value]) => {
+      const cssVar = colorMappings[key];
+      if (cssVar && value) {
+        root.style.setProperty(cssVar, value);
+        console.log(`[Redacto] 🎨 Applied CSS variable: ${cssVar} = ${value}`);
+      }
+    });
+
+    // Apply modal type and position classes
+    document.body.classList.add(`redacto-modal-${config.modalType}`);
+    document.body.classList.add(`redacto-position-${config.position}`);
+
+    console.log("[Redacto] 🎨 Applied UI configuration:", config);
+  }
 
   // Parse script src URL to extract API parameters
   function parseScriptUrl() {
@@ -343,7 +524,6 @@
       if (response.ok) {
         const result = await response.json();
         console.log("[Redacto] ✅ Consent recorded successfully:", result);
-        showConsentRecordedMessage();
         return true;
       } else {
         console.error(
@@ -357,36 +537,6 @@
       console.error("[Redacto] ❌ API request error:", error);
       return false;
     }
-  }
-
-  // Show consent recorded message
-  function showConsentRecordedMessage() {
-    // Create a temporary notification
-    const notification = document.createElement("div");
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #4CAF50;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 4px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      z-index: 10000;
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      max-width: 300px;
-    `;
-    notification.textContent = "✅ Consent recorded successfully";
-
-    document.body.appendChild(notification);
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
-      }
-    }, 3000);
   }
 
   // ========================================
@@ -961,7 +1111,7 @@
   function loadRedactoCSS() {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "css/index.css";
+    link.href = "redacto/scss/index.css";
     link.type = "text/css";
     document.head.appendChild(link);
   }
@@ -981,11 +1131,11 @@
     floatingIcon.title = "Cookie Preferences";
 
     floatingIcon.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M16.0283 32C13.0832 32 10.3835 31.3015 7.92921 29.9044C5.51269 28.5074 3.58702 26.6006 2.15221 24.1841C0.717403 21.7676 0 19.0301 0 15.9717C0 12.8755 0.717403 10.1381 2.15221 7.7593C3.58702 5.34278 5.51269 3.45487 7.92921 2.09558C10.3457 0.698525 13.0454 0 16.0283 0C19.049 0 21.7487 0.698525 24.1274 2.09558C26.544 3.45487 28.4507 5.34278 29.8478 7.7593C31.2826 10.1381 32 12.8755 32 15.9717C32 19.0679 31.2826 21.8242 29.8478 24.2407C28.413 26.6572 26.4873 28.564 24.0708 29.9611C21.6543 31.3204 18.9735 32 16.0283 32Z" fill="#4961F6"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M21.5705 7.88996L18.6696 6.71595C18.3491 6.58628 17.9866 6.76014 17.8869 7.09125L15.8567 13.8357L12.2364 7.79913C12.0484 7.4857 11.6229 7.41821 11.3472 7.65808L8.98584 9.71237C8.72513 9.93917 8.7156 10.3409 8.96526 10.5798L13.9104 15.3122L6.90657 15.1203C6.54144 15.1103 6.25593 15.4326 6.30976 15.794L6.77104 18.8905C6.82199 19.2325 7.15572 19.4568 7.49145 19.3747L14.2941 17.7105L10.9688 23.7033C10.7915 24.0228 10.9456 24.4249 11.291 24.5438L14.25 25.5626C14.5768 25.6751 14.9297 25.4823 15.0117 25.1464L16.6075 18.6106L20.3219 24.804C20.5098 25.1174 20.9353 25.1849 21.2111 24.945L23.5724 22.8907C23.8331 22.6639 23.8427 22.2622 23.593 22.0232L18.6586 17.3012L25.6953 17.1828C26.0605 17.1767 26.3315 16.8421 26.2618 16.4834L25.6642 13.4103C25.5982 13.0708 25.2549 12.8615 24.9231 12.9584L17.9312 15.0003L21.8478 8.74631C22.0418 8.43665 21.9091 8.02698 21.5705 7.88996Z" fill="white"/>
-</svg>
-
-    `;
+  <path d="M16.0283 32C13.0832 32 10.3835 31.3015 7.92921 29.9044C5.51269 28.5074 3.58702 26.6006 2.15221 24.1841C0.717403 21.7676 0 19.0301 0 15.9717C0 12.8755 0.717403 10.1381 2.15221 7.7593C3.58702 5.34278 5.51269 3.45487 7.92921 2.09558C10.3457 0.698525 13.0454 0 16.0283 0C19.049 0 21.7487 0.698525 24.1274 2.09558C26.544 3.45487 28.4507 5.34278 29.8478 7.7593C31.2826 10.1381 32 12.8755 32 15.9717C32 19.0679 31.2826 21.8242 29.8478 24.2407C28.413 26.6572 26.4873 28.564 24.0708 29.9611C21.6543 31.3204 18.9735 32 16.0283 32Z" fill="#4961F6"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M21.5705 7.88996L18.6696 6.71595C18.3491 6.58628 17.9866 6.76014 17.8869 7.09125L15.8567 13.8357L12.2364 7.79913C12.0484 7.4857 11.6229 7.41821 11.3472 7.65808L8.98584 9.71237C8.72513 9.93917 8.7156 10.3409 8.96526 10.5798L13.9104 15.3122L6.90657 15.1203C6.54144 15.1103 6.25593 15.4326 6.30976 15.794L6.77104 18.8905C6.82199 19.2325 7.15572 19.4568 7.49145 19.3747L14.2941 17.7105L10.9688 23.7033C10.7915 24.0228 10.9456 24.4249 11.291 24.5438L14.25 25.5626C14.5768 25.6751 14.9297 25.4823 15.0117 25.1464L16.6075 18.6106L20.3219 24.804C20.5098 25.1174 20.9353 25.1849 21.2111 24.945L23.5724 22.8907C23.8331 22.6639 23.8427 22.2622 23.593 22.0232L18.6586 17.3012L25.6953 17.1828C26.0605 17.1767 26.3315 16.8421 26.2618 16.4834L25.6642 13.4103C25.5982 13.0708 25.2549 12.8615 24.9231 12.9584L17.9312 15.0003L21.8478 8.74631C22.0418 8.43665 21.9091 8.02698 21.5705 7.88996Z" fill="white"/>
+  </svg>
+  
+      `;
 
     // Add click handler to reopen modal
     floatingIcon.addEventListener("click", function () {
@@ -1018,95 +1168,165 @@
   }
 
   function createCookieConsentPopup() {
-    const categoriesHTML = Object.entries(CATEGORIES)
-      .map(([key, category]) => {
-        const isRequired = category.required;
-        const isActive = state.consent[key];
-        const servicesList = category.services
-          .map((sKey) => SERVICES[sKey].name)
-          .join(", ");
+    const config = state.uiConfig || UI_CONFIG;
 
-        return `
-          <div class="redacto-service-item" data-category="${key}">
-            <div class="redacto-service-info">
-              <div class="redacto-service-name">${category.name}</div>
-              <div class="redacto-service-description">${
-                category.description
-              }</div>
-              <div class="redacto-service-list" style="font-size: 0.75rem; color: #666; margin-top: 4px;">
-                Includes: ${servicesList}
-              </div>
-            </div>
-            <div class="redacto-service-toggle">
-              <div class="redacto-toggle ${isActive ? "active" : ""} ${
-          isRequired ? "disabled" : ""
-        }" data-category="${key}">
-                <div class="redacto-toggle-handle"></div>
-              </div>
-            </div>
-          </div>
-        `;
-      })
-      .join("");
+    // Generate cookie categories dynamically
+    const generateCookieCategories = () => {
+      return Object.entries(CATEGORIES)
+        .map(
+          ([key, category]) => `
+               <div class="pm__section--toggle pm__section--expandable">
+                  <div class="pm__section-title-wrapper">
+                     <button type="button" class="pm__section-title" aria-expanded="false" aria-controls="${key}-desc">${
+            category.name
+          }${
+            category.required
+              ? `<span class="pm__badge">Always Enabled</span>`
+              : ""
+          }</button>
+                     <span class="pm__section-arrow">
+                        <svg viewBox="0 0 24 24" stroke-width="3.5">
+                           <path d="M 21.999 6.94 L 11.639 17.18 L 2.001 6.82 "></path>
+                        </svg>
+                     </span>
+                     <label class="section__toggle-wrapper">
+                        <input type="checkbox" class="section__toggle" value="${key}" ${
+            category.required ? 'disabled=""' : ""
+          }>
+                        <span class="toggle__icon" aria-hidden="true">
+                           <span class="toggle__icon-circle">
+                              <span class="toggle__icon-off">
+                                 <svg viewBox="0 0 24 24" stroke-width="3">
+                                    <path d="M 19.5 4.5 L 4.5 19.5 M 4.5 4.501 L 19.5 19.5"></path>
+                                 </svg>
+                              </span>
+                              <span class="toggle__icon-on">
+                                 <svg viewBox="0 0 24 24" stroke-width="3">
+                                    <path d="M 3.572 13.406 L 8.281 18.115 L 20.428 5.885"></path>
+                                 </svg>
+                              </span>
+                           </span>
+                        </span>
+                        <span class="toggle__label">${category.name}</span>
+                     </label>
+                  </div>
+                  <div class="pm__section-desc-wrapper" aria-hidden="true" id="${key}-desc">
+                     <p class="pm__section-desc">${category.description}</p>
+                  </div>
+               </div>`
+        )
+        .join("");
+    };
 
     return `
-        <div class="redacto-backdrop show"></div>
-        <div id="redacto" class="show">
-          <div class="redacto-modal-content">
-            <div class="redacto-modal-header">
-              <h2 class="redacto-modal-title">Cookie Consent</h2>
+      <div id="cc-main" data-nosnippet="">
+   <div class="cm-wrapper cc--anim">
+      <div class="cm cm--box cm--${config.position.split("-")[0]} cm--${
+      config.position.split("-")[1]
+    }" role="dialog" aria-modal="true" aria-hidden="false" aria-describedby="cm__desc" aria-labelledby="cm__title">
+         <div tabindex="-1"></div>
+         <div class="cm__body">
+            <div class="cm__texts">
+               <h2 id="cm__title" class="cm__title">${config.content.title}</h2>
+               <p id="cm__desc" class="cm__desc">${
+                 config.content.description
+               }</p>
             </div>
-            
-            <div class="redacto-modal-body">
-              <p class="redacto-description">
-                We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. 
-                By clicking "Accept All", you consent to our use of cookies.
-              </p>
-              
-              <div class="redacto-services-list" id="redacto-services-list" style="display: none;">
-                <div class="redacto-service-item">
-                  <div class="redacto-service-info">
-                    <div class="redacto-service-name">Essential Cookies</div>
-                    <div class="redacto-service-description">Required for the website to function properly</div>
-                  </div>
-                  <div class="redacto-service-toggle">
-                    <div class="redacto-toggle active disabled">
-                      <div class="redacto-toggle-handle"></div>
-                    </div>
-                  </div>
-                </div>
-                ${categoriesHTML}
-              </div>
+            <div class="cm__btns">
+               <div class="cm__btn-group"><button type="button" class="cm__btn" data-role="all"><span>${
+                 config.content.acceptAllText
+               }</span></button><button type="button" class="cm__btn" data-role="necessary"><span>${
+      config.content.acceptOnlyNecessaryText
+    }</span></button></div>
+               ${
+                 config.layout.showPersonalizeButton
+                   ? `<div class="cm__btn-group"><button type="button" class="cm__btn cm__btn--secondary" data-role="show"><span>${config.content.personalizeCookiesText}</span></button></div>`
+                   : ""
+               }
             </div>
-            
-            <div class="redacto-modal-footer">
-              <button class="redacto-button redacto-button-primary" id="redacto-accept-all">Accept All</button>
-              <button class="redacto-button redacto-button-personalize" id="redacto-personalize">Personalize Cookies</button>
-              <button class="redacto-button redacto-button-selected" id="redacto-accept-selected" style="display: none;">Accept Selected</button>
-              <button class="redacto-button redacto-button-secondary">Accept Only Necessary</button>
+         </div>
+         <div class="cm__footer">
+            <div class="cm__links">
+               <div class="cm__link-group">
+                ${
+                  config.content.privacyPolicyLink
+                    ? `<a href="${config.content.privacyPolicyLink}" target="_blank">Privacy Policy</a>`
+                    : ""
+                }
+                ${
+                  config.content.termsAndConditionsLink
+                    ? `<a href="${config.content.termsAndConditionsLink}" target="_blank">Terms and Conditions</a>`
+                    : ""
+                }
+               </div>
             </div>
-            
-            <div class="redacto-modal-powered-by">
-              <span>Powered by</span>
-              <a href="https://redacto.ai" target="_blank" rel="noopener noreferrer" class="redacto-powered-by-link">Redacto</a>
+         </div>
+      </div>
+   </div>
+   <div class="pm-wrapper cc--anim">
+      <div class="pm-overlay"></div>
+      <div class="pm pm--bar pm--wide pm--right pm--flip" role="dialog" aria-hidden="true" aria-modal="true" aria-labelledby="pm__title">
+         <div tabindex="-1"></div>
+         <div class="pm__header">
+            <h2 class="pm__title" id="pm__title">Consent Preferences Center</h2>
+            <button type="button" class="pm__close-btn" aria-label="Close modal">
+               <span>
+                  <svg viewBox="0 0 24 24" stroke-width="1.5">
+                     <path d="M 19.5 4.5 L 4.5 19.5 M 4.5 4.501 L 19.5 19.5"></path>
+                  </svg>
+               </span>
+            </button>
+         </div>
+         <div class="pm__body">
+            <div class="pm__section">
+               <div class="pm__section-title-wrapper">
+                  <div class="pm__section-title" role="heading" aria-level="3">Cookie Usage</div>
+               </div>
+               <div class="pm__section-desc-wrapper">
+                  <p class="pm__section-desc">${config.content.description}</p>
+               </div>
             </div>
-          </div>
-        </div>
-      `;
+            <div class="pm__section-toggles">
+              ${generateCookieCategories()}
+            </div>
+            ${
+              config.content.contactLink
+                ? ` <div class="pm__section">
+            <div class="pm__section-title-wrapper">
+              <div class="pm__section-title" role="heading" aria-level="3">More information</div>
+            </div><div class="pm__section-desc-wrapper">
+              <p class="pm__section-desc">For any query in relation to our policy on cookies and your choices, please <a class="cc__link" href="${config.content.contactLink}" target="_blank">contact us</a>.</p>
+            </div></div>`
+                : ""
+            }
+         </div>
+         <div class="pm__footer">
+            <div class="pm__btn-group"><button type="button" class="pm__btn" data-role="all">${
+              config.content.acceptAllText
+            }</button><button type="button" class="pm__btn" data-role="necessary">${
+      config.content.acceptOnlyNecessaryText
+    }</button></div>
+            <div class="pm__btn-group"><button type="button" class="pm__btn pm__btn--secondary" data-role="save">${
+              config.content.acceptSelectedText
+            }</button></div>
+         </div>
+      </div>
+   </div>
+</div>
+    `;
   }
 
   function handleClose() {
-    const popup = document.getElementById("redacto");
-    const backdrop = document.querySelector(".redacto-backdrop");
+    const popup = document.getElementById("cc-main");
 
-    if (popup) popup.classList.remove("show");
-    if (backdrop) backdrop.classList.remove("show");
-    document.body.classList.remove("redacto-modal-open");
+    if (popup) {
+      document.body.classList.remove("disable--interaction", "show--consent");
 
-    setTimeout(() => {
-      popup?.parentElement?.remove();
-      showFloatingIcon();
-    }, 300);
+      setTimeout(() => {
+        popup.remove();
+        showFloatingIcon();
+      }, 300);
+    }
   }
 
   function handleAcceptAll() {
@@ -1118,6 +1338,7 @@
     });
 
     updateConsent(newConsent);
+    handleClosePreferences();
     handleClose();
 
     setTimeout(() => {
@@ -1134,10 +1355,11 @@
 
     const newConsent = { strictly_necessary: true };
     Object.keys(CATEGORIES).forEach((key) => {
-      newConsent[key] = false;
+      newConsent[key] = CATEGORIES[key].required || false;
     });
 
     updateConsent(newConsent);
+    handleClosePreferences();
     handleClose();
 
     // Dispatch event to notify the page
@@ -1157,17 +1379,18 @@
 
     // Get current toggle states from the UI
     Object.keys(CATEGORIES).forEach((key) => {
-      const toggle = document.querySelector(
-        `.redacto-toggle[data-category="${key}"]`
+      const checkbox = document.querySelector(
+        `.section__toggle[value="${key}"]`
       );
-      const isActive = toggle && toggle.classList.contains("active");
-      newConsent[key] = isActive;
+      const isChecked = checkbox && checkbox.checked;
+      newConsent[key] = isChecked;
       console.log(
-        `[Redacto] Category ${key}: ${isActive ? "enabled" : "disabled"}`
+        `[Redacto] Category ${key}: ${isChecked ? "enabled" : "disabled"}`
       );
     });
 
     updateConsent(newConsent);
+    handleClosePreferences();
     handleClose();
 
     // Dispatch event to notify the page
@@ -1181,91 +1404,111 @@
   }
 
   function handleToggle(event) {
-    const toggle = event.currentTarget;
+    const checkbox = event.currentTarget;
 
-    if (toggle.classList.contains("disabled")) {
+    if (checkbox.disabled) {
       return;
     }
 
-    const category = toggle.getAttribute("data-category");
-    const isActive = toggle.classList.contains("active");
+    const category = checkbox.value;
+    const isChecked = checkbox.checked;
 
-    toggle.classList.toggle("active");
+    console.log(`[Redacto] 🔄 Toggle ${category}: ${isChecked}`);
 
-    const newState = !isActive;
-    console.log(`[Redacto] 🔄 Toggle ${category}: ${newState}`);
-
-    state.consent[category] = newState;
+    // Update the state immediately for real-time feedback
+    state.consent[category] = isChecked;
   }
 
   function handlePersonalizeCookies() {
     console.log("[Redacto] 🎯 Personalize Cookies clicked");
+    document.body.classList.add("show--preferences");
 
-    // Show the categories list
-    const servicesList = document.getElementById("redacto-services-list");
-    if (servicesList) {
-      servicesList.style.display = "block";
-    }
+    Object.keys(CATEGORIES).forEach((key) => {
+      const checkbox = document.querySelector(
+        `.section__toggle[value="${key}"]`
+      );
+      if (checkbox) {
+        checkbox.checked =
+          state.consent[key] || CATEGORIES[key].required || false;
+        console.log(
+          `[Redacto] Updated checkbox for ${key}: ${checkbox.checked}`
+        );
+      }
+    });
+  }
 
-    // Hide Accept All button
-    const acceptAllBtn = document.getElementById("redacto-accept-all");
-    if (acceptAllBtn) {
-      acceptAllBtn.style.display = "none";
-    }
+  function handleClosePreferences() {
+    console.log("[Redacto] 🎯 Close Preferences clicked");
+    document.body.classList.remove("show--preferences");
+  }
 
-    // Hide Personalize button
-    const personalizeBtn = document.getElementById("redacto-personalize");
-    if (personalizeBtn) {
-      personalizeBtn.style.display = "none";
-    }
-
-    // Show Accept Selected button
-    const acceptSelectedBtn = document.getElementById(
-      "redacto-accept-selected"
-    );
-    if (acceptSelectedBtn) {
-      acceptSelectedBtn.style.display = "inline-block";
-    }
+  function handlePreferenceCategorySectionToggle(event) {
+    const section = event.currentTarget;
+    const isExpanded = section.classList.contains("is-expanded");
+    section.classList.toggle("is-expanded", !isExpanded);
   }
 
   function showCookieConsentPopup() {
     hideFloatingIcon();
 
+    // Remove existing popup if any
+    const existingPopup = document.getElementById("cc-main");
+    if (existingPopup) {
+      existingPopup.remove();
+    }
+
     const popupContainer = document.createElement("div");
     popupContainer.innerHTML = createCookieConsentPopup();
     document.body.appendChild(popupContainer);
-    document.body.classList.add("redacto-modal-open");
 
-    document
-      .querySelector(".redacto-button-primary")
-      ?.addEventListener("click", handleAcceptAll);
-    document
-      .querySelector(".redacto-button-selected")
-      ?.addEventListener("click", handleAcceptSelected);
-    document
-      .querySelector(".redacto-button-secondary")
-      ?.addEventListener("click", handleAcceptOnlyNecessary);
-    document
-      .querySelector(".redacto-backdrop")
-      ?.addEventListener("click", handleClose);
+    // Add classes to show the popup
+    document.body.classList.add("show--consent");
 
-    // Add event listener for personalize button
-    document
-      .getElementById("redacto-personalize")
-      ?.addEventListener("click", handlePersonalizeCookies);
-
-    document.querySelectorAll(".redacto-toggle").forEach((toggle) => {
-      if (!toggle.classList.contains("disabled")) {
-        toggle.addEventListener("click", handleToggle);
-      }
+    // Add event listeners for the new button structure
+    document.querySelectorAll("[data-role='all']").forEach((button) => {
+      button.addEventListener("click", handleAcceptAll);
     });
+    document.querySelectorAll("[data-role='necessary']").forEach((button) => {
+      button.addEventListener("click", handleAcceptOnlyNecessary);
+    });
+    document.querySelectorAll("[data-role='show']").forEach((button) => {
+      button.addEventListener("click", handlePersonalizeCookies);
+    });
+
+    document.querySelectorAll(".pm__section--toggle").forEach((title) => {
+      title.addEventListener("click", handlePreferenceCategorySectionToggle);
+    });
+
+    document
+      .querySelector(".pm__close-btn")
+      ?.addEventListener("click", handleClosePreferences);
+
+    document
+      .querySelector(".pm-overlay")
+      ?.addEventListener("click", function (e) {
+        if (e.target === this) {
+          handleClosePreferences();
+        }
+      });
+
+    // Add event listeners for toggle checkboxes
+    document.querySelectorAll(".section__toggle").forEach((checkbox) => {
+      checkbox.addEventListener("change", handleToggle);
+    });
+
+    // Add event listener for save button
+    document.querySelectorAll("[data-role='save']").forEach((button) => {
+      button.addEventListener("click", handleAcceptSelected);
+    });
+
+    console.log("[Redacto] 🍪 Cookie consent popup displayed");
   }
 
   // ========================================
   // Initialization
   // ========================================
 
-  function initialize() {
+  async function initialize() {
     if (state.initialized) return;
 
     console.log("[Redacto] 🚀 Initializing...");
@@ -1274,7 +1517,21 @@
     // Step 1: Parse script URL for API configuration
     parseScriptUrl();
 
-    // Step 2: Check for existing consent
+    // Step 2: Fetch UI configuration from backend
+    try {
+      state.uiConfig = await fetchUIConfig();
+      applyUIConfig(state.uiConfig);
+      console.log("[Redacto] 🎨 UI configuration applied");
+    } catch (error) {
+      console.warn(
+        "[Redacto] ⚠️ Failed to load UI config, using defaults:",
+        error
+      );
+      state.uiConfig = UI_CONFIG;
+      applyUIConfig(state.uiConfig);
+    }
+
+    // Step 3: Check for existing consent
     const savedConsent = loadConsent();
     if (savedConsent) {
       console.log("[Redacto] 📖 Found saved consent:", savedConsent);
@@ -1285,25 +1542,25 @@
 
     console.log("[Redacto] Current consent state:", state.consent);
 
-    // Step 2: Intercept future script creation FIRST
+    // Step 4: Intercept future script creation FIRST
     interceptScriptCreation();
 
-    // Step 3: Clean up any existing tracking globals
+    // Step 5: Clean up any existing tracking globals
     cleanupGlobals();
 
-    // Step 4: Scan and block existing scripts
+    // Step 6: Scan and block existing scripts
     scanAndBlockScripts();
 
-    // Step 5: Block iframes
+    // Step 7: Block iframes
     scanAndBlockIframes();
 
-    // Step 6: Start mutation observer
+    // Step 8: Start mutation observer
     startMutationObserver();
 
-    // Step 7: Load UI
+    // Step 9: Load UI
     loadRedactoCSS();
 
-    // Step 8: Show popup only if no consent exists
+    // Step 10: Show popup only if no consent exists
     if (!savedConsent) {
       setTimeout(() => {
         showCookieConsentPopup();
@@ -1361,11 +1618,11 @@
 
       // Get current toggle states from the UI
       Object.keys(CATEGORIES).forEach((key) => {
-        const toggle = document.querySelector(
-          `.redacto-toggle[data-category="${key}"]`
+        const checkbox = document.querySelector(
+          `.section__toggle[value="${key}"]`
         );
-        const isActive = toggle && toggle.classList.contains("active");
-        newConsent[key] = isActive;
+        const isChecked = checkbox && checkbox.checked;
+        newConsent[key] = isChecked;
       });
 
       updateConsent(newConsent);
@@ -1451,6 +1708,38 @@
 
     hideFloatingIcon: function () {
       hideFloatingIcon();
+    },
+
+    // UI Configuration management
+    getUIConfig: function () {
+      return state.uiConfig || UI_CONFIG;
+    },
+
+    setUIConfig: function (config) {
+      state.uiConfig = mergeUIConfig(UI_CONFIG, config);
+      applyUIConfig(state.uiConfig);
+      console.log("[Redacto] ⚙️ UI configuration updated:", state.uiConfig);
+    },
+
+    fetchUIConfig: function () {
+      return fetchUIConfig();
+    },
+
+    applyUIConfig: function (config) {
+      applyUIConfig(config);
+    },
+
+    // Force refresh UI configuration
+    refreshUIConfig: async function () {
+      try {
+        state.uiConfig = await fetchUIConfig();
+        applyUIConfig(state.uiConfig);
+        console.log("[Redacto] 🔄 UI configuration refreshed");
+        return state.uiConfig;
+      } catch (error) {
+        console.warn("[Redacto] ⚠️ Failed to refresh UI config:", error);
+        return null;
+      }
     },
   };
 
