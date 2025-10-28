@@ -616,17 +616,6 @@ $service-toggle-knob-icon-width: 1.7px;
         color: var(--cc-secondary-color);
         opacity: 0.8;
         padding: 0 $padding-x;
-
-        a {
-            color: var(--cc-secondary-color);
-            text-decoration: none;
-            transition: color 0.15s ease;
-
-            &:hover {
-                color: var(--cc-primary-color);
-                text-decoration: underline;
-            }
-        }
     }
 
     /* START: Box layout */

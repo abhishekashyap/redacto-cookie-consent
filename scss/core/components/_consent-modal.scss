@@ -286,6 +286,7 @@ $footer-links-gap: 1.3rem;
         font-size: .8em;
         display: flex;
         flex-direction: row;
+        justify-content: center;
         width: 100%;
 
         & > * + * {
@@ -306,17 +307,6 @@ $footer-links-gap: 1.3rem;
         color: var(--cc-secondary-color);
         opacity: 0.8;
         padding: 0 $sections-padding-x;
-
-        a {
-            color: var(--cc-secondary-color);
-            text-decoration: none;
-            transition: color 0.15s ease;
-
-            &:hover {
-                color: var(--cc-primary-color);
-                text-decoration: underline;
-            }
-        }
     }
 
     .cm--flip{
