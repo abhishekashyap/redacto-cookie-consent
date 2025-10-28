@@ -315,7 +315,7 @@
     }
 
     try {
-      const configUrl = `${API_BASE_URL}/consent/public/organisations/${CONFIG.organisationUuid}/workspaces/${CONFIG.workspaceUuid}/ui-config`;
+      const configUrl = `${API_BASE_URL}/consent/public/organisations/${CONFIG.organisationUuid}/workspaces/${CONFIG.workspaceUuid}/cookie-consent/notices/active-config?domain=${CONFIG.domainUrl}`;
 
       console.log("[Redacto] 📡 Fetching UI configuration from:", configUrl);
 
@@ -328,7 +328,8 @@
       });
 
       if (response.ok) {
-        const config = await response.json();
+        const data = await response.json();
+        const config = data?.detail?.ui_config;
         console.log("[Redacto] ✅ UI configuration loaded:", config);
 
         // Merge with defaults to ensure all properties exist
