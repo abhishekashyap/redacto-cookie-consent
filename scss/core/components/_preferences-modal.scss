@@ -603,6 +603,32 @@ $service-toggle-knob-icon-width: 1.7px;
         }
     }
 
+    .pm__attribution {
+        color: var(--cc-footer-color);
+        background: var(--cc-footer-bg);
+        border-top: 1px solid var(--cc-separator-border-color);
+        padding: 0.2em 0 0.4em 0;
+        text-align: center;
+    }
+
+    .pm__powered-by {
+        font-size: .75em;
+        color: var(--cc-secondary-color);
+        opacity: 0.8;
+        padding: 0 $padding-x;
+
+        a {
+            color: var(--cc-secondary-color);
+            text-decoration: none;
+            transition: color 0.15s ease;
+
+            &:hover {
+                color: var(--cc-primary-color);
+                text-decoration: underline;
+            }
+        }
+    }
+
     /* START: Box layout */
 
     .pm--box{

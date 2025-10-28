@@ -1262,6 +1262,11 @@
                </div>
             </div>
          </div>
+         <div class="cm__attribution">
+            <div class="cm__powered-by">
+               <span>Powered by <a href="https://redacto.ai" target="_blank" rel="noopener">Redacto</a></span>
+            </div>
+         </div>
       </div>
    </div>
    <div class="pm-wrapper cc--anim">
@@ -1310,6 +1315,11 @@
             <div class="pm__btn-group"><button type="button" class="pm__btn pm__btn--secondary" data-role="save">${
               config.content.acceptSelectedText
             }</button></div>
+         </div>
+         <div class="pm__attribution">
+            <div class="pm__powered-by">
+               <span>Powered by <a href="https://redacto.ai" target="_blank" rel="noopener">Redacto</a></span>
+            </div>
          </div>
       </div>
    </div>
